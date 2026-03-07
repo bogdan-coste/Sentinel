@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Verify your email</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background: linear-gradient(135deg, #050b14 0%, #0a1931 100%);
+            margin: 0;
+            padding: 30px 20px;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .email-card {
+            max-width: 520px;
+            margin: 0 auto;
+            background: rgba(13, 19, 53, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 40px 35px;
+            border-radius: 32px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.8), 0 0 0 1px rgba(64, 192, 157, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .logo {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .logo-circle {
+            width: 64px;
+            height: 64px;
+            background: linear-gradient(145deg, #40c09d, #2a8068);
+            border-radius: 18px;
+            margin: 0 auto 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 10px 20px -5px rgba(64, 192, 157, 0.3);
+        }
+
+        .logo-circle span {
+            color: white;
+            font-size: 28px;
+            font-weight: 700;
+            letter-spacing: 1px;
+        }
+
+        .app-name {
+            font-size: 24px;
+            font-weight: 700;
+            letter-spacing: 2px;
+            background: linear-gradient(135deg, #ffffff 0%, #40c09d 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 5px;
+        }
+
+        .tagline {
+            color: rgba(255, 255, 255, 0.4);
+            font-size: 13px;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+
+        h1 {
+            color: white;
+            font-size: 28px;
+            font-weight: 600;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+
+        .greeting {
+            color: rgba(255, 255, 255, 0.9);
+            font-size: 16px;
+            line-height: 1.6;
+            margin-bottom: 25px;
+            text-align: center;
+        }
+
+        .greeting span {
+            color: #40c09d;
+            font-weight: 600;
+        }
+
+        .message-box {
+            background: rgba(5, 11, 20, 0.6);
+            border-radius: 20px;
+            padding: 25px;
+            margin-bottom: 30px;
+            border: 1px solid rgba(64, 192, 157, 0.15);
+        }
+
+        .message-box p {
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 15px;
+            line-height: 1.7;
+            margin-bottom: 20px;
+        }
+
+        .button-wrapper {
+            text-align: center;
+            margin: 30px 0 25px;
+        }
+
+        .verify-button {
+            display: inline-block;
+            padding: 16px 42px;
+            background: linear-gradient(145deg, #40c09d, #2e8f72);
+            color: #ffffff !important;
+            text-decoration: none;
+            border-radius: 50px;
+            font-weight: 600;
+            font-size: 16px;
+            letter-spacing: 1px;
+            box-shadow: 0 15px 25px -8px rgba(64, 192, 157, 0.4);
+            transition: all 0.3s ease;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .verify-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 20px 30px -8px rgba(64, 192, 157, 0.6);
+            background: linear-gradient(145deg, #4ed6af, #34a385);
+        }
+
+        .link-fallback {
+            text-align: center;
+            margin: 20px 0;
+        }
+
+        .link-fallback p {
+            color: rgba(255, 255, 255, 0.4);
+            font-size: 12px;
+            margin-bottom: 8px;
+        }
+
+        .direct-link {
+            color: #40c09d;
+            font-size: 12px;
+            word-break: break-all;
+            text-decoration: none;
+            opacity: 0.6;
+            transition: opacity 0.2s;
+        }
+
+        .direct-link:hover {
+            opacity: 1;
+            text-decoration: underline;
+        }
+
+        .footer {
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+            text-align: center;
+        }
+
+        .footer p {
+            color: rgba(255, 255, 255, 0.3);
+            font-size: 12px;
+            line-height: 1.6;
+        }
+
+        .footer a {
+            color: rgba(64, 192, 157, 0.6);
+            text-decoration: none;
+        }
+
+        .footer a:hover {
+            color: #40c09d;
+        }
+
+        .expiry-note {
+            background: rgba(255, 193, 7, 0.05);
+            border-radius: 12px;
+            padding: 12px 15px;
+            margin-top: 20px;
+            border-left: 3px solid #ffc107;
+        }
+
+        .expiry-note p {
+            color: rgba(255, 255, 255, 0.5);
+            font-size: 12px;
+            margin: 0;
+        }
+
+        .expiry-note i {
+            color: #ffc107;
+            margin-right: 5px;
+        }
+    </style>
+</head>
+<body>
+<div class="email-card">
+    <div class="logo">
+        <div class="logo-circle">
+            <span>S</span>
+        </div>
+        <div class="app-name">SENTINEL</div>
+        <div class="tagline">Privacy First • Always</div>
+    </div>
+
+    <h1>Welcome to the Circle</h1>
+
+    <div class="greeting">
+        Hello <span th:text="${name}">there</span>!
+    </div>
+
+    <div class="message-box">
+        <p>We're thrilled to have you join Sentinel – a social platform built on trust, privacy, and authentic connections.</p>
+
+        <p>To activate your account and start exploring, simply verify your email address by clicking the button below:</p>
+    </div>
+
+    <div class="button-wrapper">
+        <a th:href="${link}" class="verify-button">
+            ✓ VERIFY EMAIL ADDRESS
+        </a>
+    </div>
+
+    <div class="link-fallback">
+        <p>If the button doesn't work, copy and paste this link:</p>
+        <a th:href="${link}" class="direct-link" th:text="${link}">verification-link</a>
+    </div>
+
+    <div class="expiry-note">
+        <p>
+            <i>⏰</i> This verification link will expire in 48 hours for your security.
+            If you didn't create an account, you can safely ignore this email.
+        </p>
+    </div>
+
+    <div class="footer">
+        <p>
+            Sentinel – Where privacy meets connection<br>
+            © 2026 Sentinel. All rights reserved.<br>
+            <a href="#">Privacy Policy</a> • <a href="#">Terms of Service</a>
+        </p>
+    </div>
+</div>
+</body>
+</html>

@@ -1,0 +1,48 @@
+app:
+  upload:
+    base-dir: /home/bogdan/Sentinel Project/Sentinel/uploads
+
+spring:
+  application:
+    name: sentinel-backend
+  datasource:
+    url: jdbc:postgresql://localhost:5432/mydatabase
+    username: myuser
+    password: secret
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+  mail:
+    host: localhost
+    port: 1025
+    username:
+    password:
+    properties:
+      mail:
+        smtp:
+          auth: false
+          starttls:
+            enable: false
+  web:
+    error:
+      include-message: always
+      include-binding-errors: always
+      include-stacktrace: on_param
+
+logging:
+  level:
+    root: INFO
+    org.springframework.web: DEBUG
+    org.hibernate.SQL: DEBUG
+    org.hibernate.type.descriptor.sql.BasicBinder: TRACE
+    org.springframework.security: DEBUG
+    org.springframework.boot.web.servlet: DEBUG
+
+server:
+  port: 8080
+
+management:
+  server:
+    port: 8081

@@ -1,0 +1,14 @@
+# IDEs and Editors
+.idea/
+*.iml
+.vscode/
+
+# OS generated files
+.DS_Store
+thumbs.db
+
+# Logs
+*.log
+
+# Project Specific
+uploads/
