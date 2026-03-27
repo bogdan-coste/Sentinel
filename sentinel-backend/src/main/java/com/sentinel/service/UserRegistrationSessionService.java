@@ -11,11 +11,11 @@ import java.time.LocalDateTime;
 @Service
 public class UserRegistrationSessionService {
 
-    private final UserRegisterSessionRepository userRegisterSessionRepository;
+    private final UserRegisterSessionRepository repo;
     private final TokenGenerator tokenGenerator;
 
-    public UserRegistrationSessionService(UserRegisterSessionRepository userRegisterSessionRepository, TokenGenerator tokenGenerator){
-        this.userRegisterSessionRepository = userRegisterSessionRepository;
+    public UserRegistrationSessionService(UserRegisterSessionRepository repo, TokenGenerator tokenGenerator){
+        this.repo = repo;
         this.tokenGenerator = tokenGenerator;
     }
 
@@ -24,6 +24,15 @@ public class UserRegistrationSessionService {
         session.setSessionToken(tokenGenerator.generateToken());
         session.setExpirationDate(LocalDateTime.now().plusDays(2));
         session.setUser(user);
-        return userRegisterSessionRepository.save(session);
+        return repo.save(session);
+    }
+
+    public UserRegisterSession findBySessionToken(String token) {
+        return repo.findBySessionToken(token)
+                .orElseThrow(() -> new RuntimeException("Token invalid"));
+    }
+
+    public void save(UserRegisterSession userRegisterSession){
+        repo.save(userRegisterSession);
     }
 }

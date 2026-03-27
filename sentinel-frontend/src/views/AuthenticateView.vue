@@ -1,7 +1,10 @@
 <script setup lang="ts">
 import {computed, onMounted, ref, watch} from 'vue'
+import { useRouter } from 'vue-router'
 import BackgroundCanvas from "../components/common/BackgroundCanvas.vue";
 import api from '../service/api.ts'
+
+const router = useRouter()
 
 const isLoginMode = ref(true)
 const isReady = ref(false)
@@ -91,7 +94,32 @@ onMounted(() => {
 
 const handleAuth = async () => {
   if (isLoginMode.value) {
-    console.log('Logging in...', { email: email.value, password: password.value })
+    loading.value = true
+    try {
+      await api.post('/users/login', {
+        email: email.value,
+        password: password.value
+      })
+      showToast('Login successful. Redirecting...', 'success')
+      email.value = ''
+      password.value = ''
+      setTimeout(() => {
+        router.push('/home')
+      }, 1000)
+    } catch (error: any) {
+      console.error('Login failed', error)
+      let errorMsg = 'Invalid email or password.'
+      if (error.response && error.response.data) {
+        if (typeof error.response.data === 'string') {
+          errorMsg = error.response.data
+        } else if (error.response.data.message) {
+          errorMsg = error.response.data.message
+        }
+      }
+      showToast(errorMsg, 'error')
+    } finally {
+      loading.value = false
+    }
   } else {
     if (password.value !== confirmPassword.value) {
       showToast("Passwords do not match!", "error")
@@ -342,5 +370,4 @@ input:-webkit-autofill {
 .custom-scrollbar::-webkit-scrollbar { width: 4px; }
 .custom-scrollbar::-webkit-scrollbar-track { background: rgba(255, 255, 255, 0.05); }
 .custom-scrollbar::-webkit-scrollbar-thumb { background: rgba(64, 192, 157, 0.4); border-radius: 10px; }
-
 </style>

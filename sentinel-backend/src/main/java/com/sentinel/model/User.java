@@ -8,6 +8,7 @@ import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.LocalDate;
@@ -28,6 +29,10 @@ public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    ///  --- Public ID ---
+    @Column(unique = true, nullable = false)
+    private String publicId;
 
     /// --- Legitimate User ---
     @Column(nullable = false)
@@ -56,20 +61,37 @@ public class User {
     @Size(min = 2, max = 50, message = "Name must be between 2 and 50 characters")
     @Pattern(regexp = "^[\\p{L} ]+$", message = "Name can only contain letters and spaces")
     private String name;
+
+    @Size(max = 200)
     private String description;
+
+    @Column
+    private String currentProfilePicURL;
+
+    @Column
+    private String currentBannerPicURL;
+
+    @Column
+    private int friendCount;
 
     @ElementCollection
     @CollectionTable(name = "user_external_links", joinColumns = @JoinColumn(name = "user_id"))
     @Column(name = "link")
+    @ToString.Exclude
     private List<String> externalLinks;
-    private String profilePicUrl;
 
     /// --- User Details ---
+    @Column
     private LocalDate birthDate;
+
+    @Column
     private GenderType gender;
 
     /// --- Account Status ---
+    @Column
     private boolean accountDisabledByUser = false;
+
+    @Column
     private boolean accountDisabledByPlatform = false;
 
     /// --- Account Timestamps ---
@@ -77,6 +99,8 @@ public class User {
     private LocalDateTime registerDate;
 
     ///  --- Safeguarded Mode ---
+    ///
+    @Column
     private boolean safeGuardedMode = false;
 
 

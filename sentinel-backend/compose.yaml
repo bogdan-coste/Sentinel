@@ -7,3 +7,13 @@ services:
       - 'POSTGRES_USER=myuser'
     ports:
       - '5432:5432'
+  mailhog:
+    image: mailhog/mailhog
+    container_name: sentinel-mailhog
+    ports:
+      - "1025:1025"
+      - "8025:8025"
+    restart: unless-stopped
+
+volumes:
+  postgres_data:

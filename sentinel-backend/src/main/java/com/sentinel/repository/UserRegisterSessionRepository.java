@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public interface UserRegisterSessionRepository extends JpaRepository<UserRegisterSession, Long> {
@@ -18,5 +19,7 @@ public interface UserRegisterSessionRepository extends JpaRepository<UserRegiste
 
     @Query("SELECT s FROM UserRegisterSession s WHERE s.accountVerified = false AND s.expirationDate < :time")
     List<UserRegisterSession> findExpiredUnverifiedSessions(@Param("time") LocalDateTime time);
+
+    Optional<UserRegisterSession> findBySessionToken(String token);
 
 }

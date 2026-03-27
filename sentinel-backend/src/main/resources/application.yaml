@@ -1,3 +1,7 @@
+app:
+  upload:
+    base-dir: /home/bogdan/Sentinel Project/Sentinel/uploads
+
 spring:
   application:
     name: sentinel-backend
@@ -10,10 +14,22 @@ spring:
     hibernate:
       ddl-auto: update
     show-sql: true
-  security:
-    user:
-      name: bogdancoste
-      password: BogdanRaul76
+  mail:
+    host: localhost
+    port: 1025
+    username:
+    password:
+    properties:
+      mail:
+        smtp:
+          auth: false
+          starttls:
+            enable: false
+  web:
+    error:
+      include-message: always
+      include-binding-errors: always
+      include-stacktrace: on_param
 
 logging:
   level:
@@ -21,13 +37,11 @@ logging:
     org.springframework.web: DEBUG
     org.hibernate.SQL: DEBUG
     org.hibernate.type.descriptor.sql.BasicBinder: TRACE
+    org.springframework.security: DEBUG
+    org.springframework.boot.web.servlet: DEBUG
 
 server:
   port: 8080
-  error:
-    include-message: always
-    include-binding-errors: always
-    include-stacktrace: on_param
 
 management:
   server:

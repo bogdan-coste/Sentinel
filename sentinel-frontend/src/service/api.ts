@@ -1,11 +1,9 @@
 import axios from 'axios'
 
-const dynamicHost = window.location.hostname
-const PORT = '8080'
-
 const api = axios.create({
-    baseURL: `http://${dynamicHost}:${PORT}/api`,
+    baseURL: '/api',
     timeout: 10000,
+    withCredentials: true,
     headers: {
         'Content-Type': 'application/json'
     }

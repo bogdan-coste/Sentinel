@@ -20,7 +20,6 @@ import com.sentinel.utils.TokenGenerator;
 @AllArgsConstructor
 public class UserRegisterSession {
 
-
     ///  --- Registration ID ---
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -46,6 +45,7 @@ public class UserRegisterSession {
     @Column(nullable = false)
     private boolean accountVerified = false;
 
+    ///  --- Associate User with Register Session ---
     @ManyToOne(optional = false)
     @JoinColumn(name = "user_id")
     private User user;
