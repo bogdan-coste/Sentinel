@@ -38,6 +38,10 @@ public class User {
     @Column(nullable = false)
     private boolean legitimateUser = false;
 
+    /// --- Private User ---
+    @Column(nullable = false)
+    private boolean privateUser = false;
+
     /// --- Directory Name for the User ---
     @Column(unique = true, nullable = false, length = 32)
     private String folderName;

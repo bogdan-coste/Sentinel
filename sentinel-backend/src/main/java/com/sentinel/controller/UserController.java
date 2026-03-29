@@ -16,9 +16,11 @@ import org.springframework.web.bind.annotation.*;
 import jakarta.servlet.http.HttpServletResponse;
 import com.sentinel.model.UserRegisterSession;
 
+import javax.print.attribute.standard.Media;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -34,13 +36,15 @@ public class UserController {
     private final PasswordEncoder passwordEncoder;
     private final UserFolderService userFolderService;
     private final MediaService mediaService;
+    private final FriendshipService friendshipService;
 
     private static final Logger log = LoggerFactory.getLogger(UserController.class);
 
     public UserController(UserService userService, UserRegistrationSessionService userRegisterService,
                           UserLoginSessionService userLoginService, EmailService emailService,
                           TokenGenerator tokenGenerator, PasswordEncoder passwordEncoder,
-                          UserFolderService userFolderService, MediaService mediaService){
+                          UserFolderService userFolderService, MediaService mediaService,
+                          FriendshipService friendshipService){
         this.userService = userService;
         this.userRegisterService = userRegisterService;
         this.userLoginService = userLoginService;
@@ -49,6 +53,7 @@ public class UserController {
         this.passwordEncoder = passwordEncoder;
         this.userFolderService = userFolderService;
         this.mediaService = mediaService;
+        this.friendshipService = friendshipService;
     }
 
     @PostMapping("/register")
@@ -195,6 +200,97 @@ public class UserController {
         response.put("profilePicMediaId", profilePic != null ? profilePic.getId() : null);
         response.put("bannerPicUrl", bannerPicUrl);
         response.put("bannerMediaId", profileBanner != null ? profileBanner.getId() : null);
+
+        return ResponseEntity.ok(response);
+    }
+
+    @GetMapping("searchAccounts")
+    public ResponseEntity<?> getSearchResults(@RequestParam String query){
+
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        if (auth == null || !auth.isAuthenticated()) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Not authenticated");
+        }
+
+        User user = (User) auth.getPrincipal();
+
+        if(user == null){
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }
+
+        List<User> users = userService.searchUsers(query);
+
+        List<Map<String, Object>> response = users.stream().map(userElem ->{
+            Map<String, Object> map = new HashMap<>();
+            map.put("publicId", userElem.getPublicId());
+            if (userElem.getCurrentProfilePicURL() != null) {
+                map.put("profilePicUrl", "/uploads/public/" + userElem.getPublicId() + "/profile/" + userElem.getCurrentProfilePicURL());
+            } else {
+                map.put("profilePicUrl", null);
+            }
+            map.put("username", userElem.getUsername());
+            map.put("name", userElem.getName());
+            return map;
+        }).toList();
+
+        return ResponseEntity.ok(response);
+    }
+
+    @GetMapping("/{publicId}")
+    public ResponseEntity<?> getUserProfile(@PathVariable String publicId) {
+        Optional<User> targetOpt = userService.findByPublicId(publicId);
+        if (targetOpt.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found");
+        }
+        User targetUser = targetOpt.get();
+
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+
+        if(auth == null || !auth.isAuthenticated()){
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+
+        User currentUser = (User) auth.getPrincipal();
+
+        if(currentUser == null){
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+
+        if (currentUser.getPublicId().equals(publicId)) {
+            return ResponseEntity.status(HttpStatus.FOUND)
+                    .header("Location", "/profile")
+                    .build();
+        }
+
+        Optional<Friendship> friendship = friendshipService.findFriendshipBetween(currentUser, targetUser);
+
+        String friendshipStatus = "NONE";
+        boolean isFriend = false;
+
+        if (friendship.isPresent()) {
+            friendshipStatus = friendship.get().getStatus().name(); // Extracts "PENDING" or "ACCEPTED"
+            isFriend = (friendship.get().getStatus() == FriendshipStatus.ACCEPTED);
+        }
+
+        Map<String, Object> response = new HashMap<>();
+
+        response.put("friendshipStatus", friendshipStatus);
+
+        UserGuestDto userInfoDto = UserGuestDto.fromEntity(targetUser, isFriend);
+        response.put("userInformation", userInfoDto);
+
+        if(isFriend) {
+            List<User> targetUserFriends = friendshipService.findFriends(targetUser);
+            List<UserGuestDto> friendDtos = targetUserFriends.stream()
+                    .map(friend -> UserGuestDto.fromEntity(friend, true))
+                    .toList();
+            List<MediaEntity> targetUserMedia = mediaService.findAllByOwner(targetUser);
+            List<MediaResponseDto> mediaDtos = targetUserMedia.stream().
+                    map(MediaResponseDto::fromEntity).toList();
+
+            response.put("friends", friendDtos);
+            response.put("media", mediaDtos);
+        }
 
         return ResponseEntity.ok(response);
     }

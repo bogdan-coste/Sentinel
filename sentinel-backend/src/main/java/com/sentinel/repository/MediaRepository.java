@@ -25,4 +25,6 @@ public interface MediaRepository extends JpaRepository<MediaEntity, Long> {
     @Transactional
     @Query("DELETE FROM MediaEntity m WHERE m.owner = :user AND m.type = :type AND m.path LIKE %:filename%")
     void deleteByOwnerAndTypeAndFilename(@Param("user") User user, @Param("type") MediaType type, @Param("filename") String filename);
+
+    void deleteById(Long mediaId);
 }

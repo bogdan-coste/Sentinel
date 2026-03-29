@@ -9,6 +9,7 @@ public class UserDto {
     private String name;
     private String username;
     private String profilePicUrl;
+    private boolean privateUser;
 
     public static UserDto fromEntity(User user) {
         if (user == null) return null;
@@ -19,6 +20,8 @@ public class UserDto {
         if (user.getCurrentProfilePicURL() != null) {
             dto.setProfilePicUrl("/uploads/public/" + user.getPublicId() + "/profile/" + user.getCurrentProfilePicURL());
         }
+        dto.setPrivateUser(user.isPrivateUser());
+
         return dto;
     }
 }

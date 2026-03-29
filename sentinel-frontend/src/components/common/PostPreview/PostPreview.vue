@@ -199,7 +199,7 @@ const fetchComments = async () => {
 
   isFetchingComments.value = true;
   try {
-    const response = await api.get(`/comments/media/${props.previewImage.id}/comments`);
+    const response = await api.get(`/comments/media/${props.previewImage.id}`);
     props.previewImage.comments = response.data || [];
   } catch (err) {
     console.error('Failed to load comments', err);
@@ -310,7 +310,7 @@ onMounted(async () => {
   }
 
   try {
-    const commentsRes = await api.get(`/comments/media/${props.previewImage.id}/comments`);
+    const commentsRes = await api.get(`/comments/media/${props.previewImage.id}`);
     props.previewImage.comments = commentsRes.data || [];
   } catch (err) {
     console.error('Failed to fetch initial comments', err);

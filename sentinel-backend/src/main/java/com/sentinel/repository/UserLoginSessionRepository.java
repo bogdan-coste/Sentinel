@@ -16,5 +16,5 @@ public interface UserLoginSessionRepository extends JpaRepository<UserLoginSessi
     UserLoginSession findBySessionToken(String token);
 
     @Query("SELECT s FROM UserLoginSession s WHERE s.sessionToken = :token AND s.expirationDate > :now")
-    public Optional<UserLoginSession> findByTokenAndNotExpired(@Param("token") String token, @Param("now")LocalDateTime now);
+    Optional<UserLoginSession> findByTokenAndNotExpired(@Param("token") String token, @Param("now")LocalDateTime now);
 }

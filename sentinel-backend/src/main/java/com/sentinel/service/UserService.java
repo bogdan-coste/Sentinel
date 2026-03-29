@@ -1,5 +1,6 @@
 package com.sentinel.service;
 
+import com.sentinel.model.Friendship;
 import com.sentinel.model.User;
 import com.sentinel.model.UserRegistrationDto;
 import com.sentinel.repository.UserRepository;
@@ -9,6 +10,7 @@ import jakarta.transaction.Transactional;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -83,4 +85,9 @@ public class UserService {
     public Optional<User> findByPublicId(String publicId) {
         return userRepository.findByPublicId(publicId);
     }
+
+    public List<User> searchUsers(String query) {
+        return userRepository.searchUsers(query);
+    }
+
 }

@@ -10,7 +10,7 @@
     </div>
 
     <div v-else class="flex flex-col gap-4 max-h-75 overflow-y-auto custom-scrollbar pr-2">
-      <div v-for="comment in post.comments" :key="comment.id" class="flex gap-3">
+      <div v-for="comment in comments" :key="comment.id" class="flex gap-3">
         <img v-if="comment.author?.profilePicUrl" :src="comment.author.profilePicUrl" class="w-8 h-8 rounded-full bg-[#0A192F] object-cover shrink-0 border border-white/10"  alt=""/>
         <div v-else class="w-8 h-8 rounded-full bg-white/5 flex items-center justify-center shrink-0 border border-white/10">
           <svg class="w-4 h-4 text-white/30" fill="currentColor" viewBox="0 0 24 24"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>
@@ -25,7 +25,7 @@
         </div>
       </div>
 
-      <div v-if="!post.comments?.length" class="text-center text-[12px] text-white/40 py-2">
+      <div v-if="!comments?.length" class="text-center text-[12px] text-white/40 py-2">
         No comments yet. Be the first to reply!
       </div>
     </div>
@@ -61,68 +61,40 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
-import api from "../../../service/api.ts"
+import { ref } from 'vue'
 
 const props = defineProps({
-  post: {
-    type: Object,
-    required: true
+  comments: {
+    type: Array as () => any[],
+    default: () => []
   },
   userProfile: {
     type: Object,
     default: null
+  },
+  isLoading: {
+    type: Boolean,
+    default: false
+  },
+  isSubmitting: {
+    type: Boolean,
+    default: false
+  },
+  errorMsg: {
+    type: String,
+    default: null
   }
 })
 
+const emit = defineEmits(['submit-comment'])
 const commentInput = ref('')
-const isLoading = ref(false)
-const isSubmitting = ref(false)
-const errorMsg = ref<string | null>(null)
 
-onMounted(async () => {
-  if (!props.post?.id) {
-    isLoading.value = false;
-    return;
-  }
-
-  if (!props.post.comments || props.post.comments.length === 0) {
-    isLoading.value = true;
-    errorMsg.value = null;
-    try {
-      const response = await api.get(`/comments/media/${props.post.id}`);
-      props.post.comments = response.data || [];
-    } catch (err) {
-      console.error('Failed to load comments', err);
-      errorMsg.value = "Couldn't load comments. Try again.";
-      props.post.comments = [];
-    } finally {
-      isLoading.value = false;
-    }
-  }
-});
-
-const submit = async () => {
+const submit = () => {
   const content = commentInput.value.trim()
-  if (!content || isSubmitting.value) return
+  if (!content || props.isSubmitting) return
 
-  isSubmitting.value = true
-  errorMsg.value = null
-
-  try {
-    const response = await api.post('/comments', {
-      mediaId: props.post.id,
-      content: content
-    })
-    if (!props.post.comments) props.post.comments = []
-    props.post.comments.push(response.data)
-    commentInput.value = ''
-  } catch (err) {
-    console.error('Failed to add comment', err)
-    errorMsg.value = "Failed to post comment. Please try again."
-  } finally {
-    isSubmitting.value = false
-  }
+  emit('submit-comment', content)
+  commentInput.value = ''
 }
 </script>
 

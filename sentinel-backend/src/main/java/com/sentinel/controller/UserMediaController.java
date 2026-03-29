@@ -1,5 +1,6 @@
 package com.sentinel.controller;
 
+import com.sentinel.Validators.ValidateCurrentUser;
 import com.sentinel.model.MediaEntity;
 import com.sentinel.model.MediaResponseDto;
 import com.sentinel.model.MediaType;
@@ -23,7 +24,7 @@ import java.util.*;
 
 @RestController
 @RequestMapping("/api/users/me")
-public class UserMediaController {
+public class UserMediaController extends Controller{
 
     private final LikeService likeService;
     @Value("${app.upload.base-dir}")
@@ -35,7 +36,9 @@ public class UserMediaController {
     private final CommentService commentService;
 
     public UserMediaController(UserService userService, MediaService mediaService,
-                               UserFolderService folderService, CommentService commentService, LikeService likeService) {
+                               UserFolderService folderService, CommentService commentService,
+                               LikeService likeService, ValidateCurrentUser validator) {
+        super(validator);
         this.userService = userService;
         this.mediaService = mediaService;
         this.folderService = folderService;
@@ -48,14 +51,7 @@ public class UserMediaController {
     public ResponseEntity<?> uploadProfilePic(@RequestParam("file") MultipartFile file,
                                               @RequestParam(value = "description", required = false) String description) throws IOException {
 
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        if (auth == null || !auth.isAuthenticated()) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
-        }
-        User user = (User) auth.getPrincipal();
-        if (user == null || user.getFolderName().isEmpty()) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
-        }
+        User currentUser = getCurrentUser();
 
         String contentType = file.getContentType();
         if (contentType == null || !contentType.startsWith("image/")) {
@@ -68,31 +64,31 @@ public class UserMediaController {
             extension = originalFilename.substring(originalFilename.lastIndexOf("."));
         }
         String filename = UUID.randomUUID() + extension;
-        Path userDir = Paths.get(baseUploadDir, "users", user.getFolderName());
+        Path userDir = Paths.get(baseUploadDir, "users", currentUser.getFolderName());
         Path targetDir = userDir.resolve("profile");
         Path targetFile = targetDir.resolve(filename);
         Files.createDirectories(userDir);
         Files.createDirectories(targetDir);
         file.transferTo(targetFile.toFile());
 
-        String oldFilename = user.getCurrentProfilePicURL();
+        String oldFilename = currentUser.getCurrentProfilePicURL();
         if (oldFilename != null) {
-            mediaService.deleteByOwnerAndTypeAndFilename(user, MediaType.PROFILE_PICTURE, oldFilename);
+            mediaService.deleteByOwnerAndTypeAndFilename(currentUser, MediaType.PROFILE_PICTURE, oldFilename);
             Path oldFile = targetDir.resolve(oldFilename);
             Files.deleteIfExists(oldFile);
         }
 
         MediaEntity profilePicture = new MediaEntity();
         profilePicture.setType(MediaType.PROFILE_PICTURE);
-        profilePicture.setOwner(user);
+        profilePicture.setOwner(currentUser);
         profilePicture.setPath(targetFile.toString());
         profilePicture.setContent(description);
         mediaService.save(profilePicture);
 
-        user.setCurrentProfilePicURL(filename);
-        userService.save(user);
+        currentUser.setCurrentProfilePicURL(filename);
+        userService.save(currentUser);
 
-        String publicUrl = "/uploads/public/" + user.getPublicId() + "/profile/" + filename;
+        String publicUrl = "/uploads/public/" + currentUser.getPublicId() + "/profile/" + filename;
         Map<String, Object> response = new HashMap<>();
         response.put("profilePicUrl", publicUrl);
         response.put("profilePicMediaId", profilePicture.getId());
@@ -104,14 +100,7 @@ public class UserMediaController {
     public ResponseEntity<?> uploadProfileBanner(@RequestParam("file") MultipartFile file,
                                                  @RequestParam(value = "description", required = false) String description) throws IOException {
 
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        if (auth == null || !auth.isAuthenticated()) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
-        }
-        User user = (User) auth.getPrincipal();
-        if (user == null || user.getFolderName() == null || user.getFolderName().isEmpty()) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
-        }
+        User currentUser = getCurrentUser(); // ✅
 
         String contentType = file.getContentType();
         if (contentType == null || !contentType.startsWith("image/")) {
@@ -124,16 +113,16 @@ public class UserMediaController {
             extension = originalFilename.substring(originalFilename.lastIndexOf("."));
         }
         String filename = UUID.randomUUID() + extension;
-        Path userDir = Paths.get(baseUploadDir, "users", user.getFolderName());
+        Path userDir = Paths.get(baseUploadDir, "users", currentUser.getFolderName());
         Path targetDir = userDir.resolve("banner");
         Path targetFile = targetDir.resolve(filename);
         Files.createDirectories(userDir);
         Files.createDirectories(targetDir);
         file.transferTo(targetFile.toFile());
 
-        String oldFilename = user.getCurrentBannerPicURL();
+        String oldFilename = currentUser.getCurrentBannerPicURL();
         if (oldFilename != null) {
-            mediaService.deleteByOwnerAndTypeAndFilename(user, MediaType.PROFILE_BANNER, oldFilename);
+            mediaService.deleteByOwnerAndTypeAndFilename(currentUser, MediaType.PROFILE_BANNER, oldFilename);
             Path oldFile = targetDir.resolve(oldFilename);
             Files.deleteIfExists(oldFile);
         }
@@ -141,14 +130,14 @@ public class UserMediaController {
         MediaEntity profileBanner = new MediaEntity();
         profileBanner.setContent(description);
         profileBanner.setType(MediaType.PROFILE_BANNER);
-        profileBanner.setOwner(user);
+        profileBanner.setOwner(currentUser);
         profileBanner.setPath(targetFile.toString());
         mediaService.save(profileBanner);
 
-        user.setCurrentBannerPicURL(filename);
-        userService.save(user);
+        currentUser.setCurrentBannerPicURL(filename);
+        userService.save(currentUser);
 
-        String publicUrl = "/uploads/public/" + user.getPublicId() + "/banner/" + filename;
+        String publicUrl = "/uploads/public/" + currentUser.getPublicId() + "/banner/" + filename;
         Map<String, Object> response = new HashMap<>();
         response.put("bannerPicUrl", publicUrl);
         response.put("bannerMediaId", profileBanner.getId());
@@ -156,16 +145,36 @@ public class UserMediaController {
     }
 
     @Transactional(rollbackFor = Exception.class)
-    @PostMapping("/posts")
+    @DeleteMapping("/posts/{postId}")
+    public ResponseEntity<?> deletePost(@PathVariable Long postId) throws IOException {
+        User currentUser = getCurrentUser();
+
+        MediaEntity post = mediaService.findById(postId);
+        if (post == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Post not found");
+        }
+
+        if (!post.getOwner().getId().equals(currentUser.getId())) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("You are not allowed to delete this post");
+        }
+
+        if (post.getPath() != null) {
+            Path filePath = Paths.get(post.getPath());
+            Files.deleteIfExists(filePath);
+        }
+
+        mediaService.deleteById(post.getId());
+
+        return ResponseEntity.ok(Map.of("message", "Post deleted successfully"));
+    }
+
+    @Transactional(rollbackFor = Exception.class)
+    @PostMapping("/create-post")
     public ResponseEntity<?> createPost(
             @RequestParam(value = "content", required = false) String content,
             @RequestParam(value = "file", required = false) MultipartFile file) throws IOException {
 
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        if (auth == null || !auth.isAuthenticated()) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Not authenticated");
-        }
-        User user = (User) auth.getPrincipal();
+        User currentUser = getCurrentUser();
 
         if ((content == null || content.isBlank()) && (file == null || file.isEmpty())) {
             return ResponseEntity.badRequest().body(Map.of("error", "Post must have text or an image"));
@@ -188,19 +197,19 @@ public class UserMediaController {
             }
             filename = UUID.randomUUID() + extension;
 
-            Path userDir = Paths.get(baseUploadDir, "users", user.getFolderName());
+            Path userDir = Paths.get(baseUploadDir, "users", currentUser.getFolderName());
             Path targetDir = userDir.resolve("posts");
             Files.createDirectories(targetDir);
             targetFile = targetDir.resolve(filename);
             file.transferTo(targetFile.toFile());
 
-            imageUrl = "/uploads/public/" + user.getPublicId() + "/posts/" + filename;
+            imageUrl = "/uploads/public/" + currentUser.getPublicId() + "/posts/" + filename;
         }
 
         MediaEntity post = new MediaEntity();
         post.setContent(content);
         post.setPath(targetFile != null ? targetFile.toString() : null);
-        post.setOwner(user);
+        post.setOwner(currentUser);
         post.setType(MediaType.POST);
         mediaService.save(post);
 
@@ -219,25 +228,15 @@ public class UserMediaController {
     @GetMapping("/user-media")
     public ResponseEntity<?> profilePageMedia(){
 
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        User currentUser = getCurrentUser();
 
-        if(auth == null || !auth.isAuthenticated()){
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
-        }
-
-        User user = (User) auth.getPrincipal();
-
-        if(user == null){
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
-        }
-
-        List<MediaEntity> allUserMedia = mediaService.findAllByOwner(user);
+        List<MediaEntity> allUserMedia = mediaService.findAllByOwner(currentUser);
 
         return ResponseEntity.status(HttpStatus.OK).body(
                 allUserMedia.stream()
                         .map(media -> {
                             MediaResponseDto dto = MediaResponseDto.fromEntity(media);
-                            dto.setLikedByCurrentUser(likeService.existsByUserAndMedia(user, media));
+                            dto.setLikedByCurrentUser(likeService.existsByUserAndMedia(currentUser, media));
                             int commentCount = commentService.countByMedia(media);
                             dto.setCommentCount(commentCount);
                             return dto;

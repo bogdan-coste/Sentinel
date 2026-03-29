@@ -7,7 +7,7 @@
 
     <span class="text-[12px] text-white/70 truncate">
       <template v-if="post.likes > 0">
-        <span class="font-bold text-white/90">Robert Fox</span>
+        <span class="font-bold text-white/90">{{ displayLikers[0]?.name || 'Someone' }}</span>
         <span v-if="post.likes > 1"> and {{ post.likes - 1 }} others</span>
       </template>
       <template v-else>
@@ -25,17 +25,18 @@ const props = defineProps({
   post: {
     type: Object,
     required: true
+  },
+  likers: {
+    type: Array as () => any[],
+    default: () => []
   }
 });
 
-const mockAvatars = [
-  { image: 'https://i.pravatar.cc/150?img=68' },
-  { image: 'https://i.pravatar.cc/150?img=12' },
-  { image: 'https://i.pravatar.cc/150?img=33' }
-];
-
 const displayLikers = computed(() => {
-  return mockAvatars.slice(0, Math.min(props.post.likes, 3));
+  return props.likers.slice(0, Math.min(props.post.likes, 3)).map(likeObj => ({
+    name: likeObj.user?.name || 'User',
+    image: likeObj.user?.profilePicUrl || ''
+  }));
 });
 </script>
 

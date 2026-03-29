@@ -1,6 +1,6 @@
 import { createRouter, createWebHistory } from "vue-router";
 import MainPageView from "../views/MainPageView.vue";
-import DashboardView from "../views/DashboardView.vue";   // new import
+import DashboardView from "../views/DashboardView.vue";
 import AuthenticateView from "../views/AuthenticateView.vue";
 import AuthResultView from "../views/AuthResultView.vue";
 import VerifyView from "../views/VerifyView.vue";
@@ -9,6 +9,7 @@ import api from "../service/api";
 import MessageView from "../views/MessageView.vue";
 import SettingsView from "../views/SettingsView.vue";
 import CommentDebug from "../views/CommentDebug.vue";
+import GuestProfileView from "../views/GuestProfileView.vue";
 
 const routes = [
     {
@@ -25,6 +26,12 @@ const routes = [
         path: '/profile',
         name: 'profile',
         component: ProfileView,
+        meta: { requiresAuth: true }
+    },
+    {
+        path: '/profile/:publicId',
+        name: 'ViewGuest',
+        component: GuestProfileView,
         meta: { requiresAuth: true }
     },
     {
@@ -77,7 +84,6 @@ const router = createRouter({
 });
 
 router.beforeEach(async (to, _from, next) => {
-    // Protected route (only /home)
     if (to.matched.some(record => record.meta.requiresAuth)) {
         try {
             await api.get('/users/me');
@@ -86,14 +92,11 @@ router.beforeEach(async (to, _from, next) => {
             next({ name: 'main' });
         }
     }
-    // Guest routes (all others)
     else if (to.matched.some(record => record.meta.requiresGuest)) {
         try {
             await api.get('/users/me');
-            // Logged in → redirect to home
             next({ name: 'home' });
         } catch {
-            // Not logged in → stay on guest route
             next();
         }
     }

@@ -47,7 +47,7 @@ public class UserCommentController {
         return ResponseEntity.status(HttpStatus.CREATED).body(CommentResponseDto.fromEntity(comment));
     }
 
-    @GetMapping("/media/{mediaId}/comments")
+    @GetMapping("/media/{mediaId}")
     public ResponseEntity<?> getCommentsForMedia(@PathVariable Long mediaId) {
         List<CommentEntity> comments = commentService.getCommentsForMedia(mediaId);
         List<CommentResponseDto> commentDtos = comments.stream().

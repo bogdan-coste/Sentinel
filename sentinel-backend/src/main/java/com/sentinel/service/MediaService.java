@@ -58,4 +58,7 @@ public class MediaService {
         repo.deleteByOwnerAndTypeAndFilename(user, type, filename);
     }
 
+    public void deleteById(Long mediaId){
+        repo.deleteById(mediaId);
+    }
 }

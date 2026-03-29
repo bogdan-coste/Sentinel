@@ -4,9 +4,9 @@
 
       <AppNavbar />
 
-      <div v-if="activeSubmenu" @click="closeSubmenu" class="fixed inset-0 z-[40]"></div>
+      <div v-if="activeSubmenu" @click="closeSubmenu" class="fixed inset-0 z-40"></div>
 
-      <div class="flex-1 w-full max-w-[1440px] mx-auto overflow-hidden flex flex-col lg:flex-row gap-8 px-4 lg:px-8 py-6">
+      <div class="flex-1 w-full max-w-360 mx-auto overflow-hidden flex flex-col lg:flex-row gap-8 px-4 lg:px-8 py-6">
 
         <div v-if="loading" class="flex justify-center items-center w-full h-full">
           <div class="animate-spin rounded-full h-10 w-10 border-t-2 border-b-2 border-blue-400"></div>
@@ -14,7 +14,7 @@
 
         <aside v-if="userProfile && !loading" class="w-full lg:w-[320px] xl:w-85 h-full flex flex-col gap-5 shrink-0 pt-2 overflow-y-auto no-scrollbar pb-6">
 
-          <div class="bg-[#0A192F]/40 backdrop-blur-2xl rounded-[40px] flex flex-col relative border border-white/[0.05] shrink-0 transition-all overflow-visible" :class="activeSubmenu ? 'z-[50]' : 'z-10'">
+          <div class="bg-[#0A192F]/40 backdrop-blur-2xl rounded-[40px] flex flex-col relative border border-white/5 shrink-0 transition-all overflow-visible" :class="activeSubmenu ? 'z-50' : 'z-10'">
 
             <div class="w-full relative h-36 shrink-0">
               <UserAvatarBanner
@@ -34,27 +34,27 @@
               <div class="h-20 w-full shrink-0"></div>
 
               <div class="flex flex-col items-center gap-1 mb-6">
-        <span class="text-[10px] font-black text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-indigo-400 tracking-[0.25em] uppercase">
-          @{{ userProfile.username }}
-        </span>
+                <span class="text-[10px] font-black text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-indigo-400 tracking-[0.25em] uppercase">
+                  @{{ userProfile.username }}
+                </span>
                 <h2 class="text-[28px] font-black text-white tracking-tight leading-tight">
                   {{ userProfile.name }}
                 </h2>
               </div>
 
-              <div class="flex items-center justify-around w-full bg-black/30 border border-white/[0.03] rounded-[28px] py-5 mb-6">
+              <div class="flex items-center justify-around w-full bg-black/30 border border-white/3 rounded-[28px] py-5 mb-6">
                 <div class="flex-1 flex flex-col items-center">
                   <span class="text-2xl font-black text-white tracking-tighter">{{ userProfile.friendCount || 0 }}</span>
                   <span class="text-[9px] text-white/30 uppercase tracking-[0.2em] font-bold mt-0.5">Friends</span>
                 </div>
-                <div class="w-[1px] h-8 bg-white/5"></div>
+                <div class="w-px h-8 bg-white/5"></div>
                 <div class="flex-1 flex flex-col items-center">
                   <span class="text-2xl font-black text-white tracking-tighter">{{ communities.length || 0 }}</span>
                   <span class="text-[9px] text-white/30 uppercase tracking-[0.2em] font-bold mt-0.5">Groups</span>
                 </div>
               </div>
 
-              <button @click="openEditModal('basic')" class="w-full py-3.5 rounded-full border border-white/[0.08] bg-white/[0.02] hover:bg-white/[0.06] text-white/90 text-[11px] font-bold tracking-[0.2em] uppercase transition-all active:scale-95 mb-6">
+              <button @click="openEditModal('basic')" class="w-full py-3.5 rounded-full border border-white/8 bg-white/2 hover:bg-white/6 text-white/90 text-[11px] font-bold tracking-[0.2em] uppercase transition-all active:scale-95 mb-6">
                 {{ userProfile.description ? 'Edit Profile' : '+ Add a bio' }}
               </button>
 
@@ -63,76 +63,65 @@
               </p>
 
               <div v-if="editForm.introVisibility !== 'Only Me'" class="flex flex-wrap justify-center gap-2 mb-8">
-                <div class="px-4 py-2 rounded-full bg-white/[0.03] border border-white/[0.05] flex items-center gap-2 text-[11px] font-semibold text-white/60 hover:text-white transition-colors cursor-default backdrop-blur-sm">
+                <div class="px-4 py-2 rounded-full bg-white/3 border border-white/5 flex items-center gap-2 text-[11px] font-semibold text-white/60 hover:text-white transition-colors cursor-default backdrop-blur-sm">
                   <div class="w-1.5 h-1.5 rounded-full bg-blue-500"></div>
                   Sentinel
                 </div>
-                <div class="px-4 py-2 rounded-full bg-white/[0.03] border border-white/[0.05] flex items-center gap-2 text-[11px] font-semibold text-white/60 hover:text-white transition-colors cursor-default backdrop-blur-sm">
+                <div class="px-4 py-2 rounded-full bg-white/3 border border-white/5 flex items-center gap-2 text-[11px] font-semibold text-white/60 hover:text-white transition-colors cursor-default backdrop-blur-sm">
                   <svg class="w-3.5 h-3.5 text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path></svg>
                   Cluj-Napoca
                 </div>
               </div>
 
               <div class="w-full" v-if="editForm.friendsListVisibility !== 'Only Me'">
-                <button class="w-full flex items-center justify-between p-4 rounded-[30px] bg-black/40 hover:bg-black/60 border border-white/[0.03] transition-all group active:scale-[0.98]">
-                  <div class="flex items-center gap-4">
-                    <div class="flex items-center -space-x-3">
-                      <img v-for="friend in friends.slice(0, 3)" :key="friend.name" :src="friend.image" class="w-10 h-10 rounded-full border-[3px] border-[#09152a] object-cover" />
-                      <div v-if="friends.length === 0" class="w-10 h-10 rounded-full border-[3px] border-[#09152a] bg-blue-600/20 flex items-center justify-center text-blue-400">
-                        <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z"></path></svg>
-                      </div>
-                    </div>
-                    <div class="flex flex-col items-start gap-0.5">
-                      <span class="text-sm font-bold text-white group-hover:text-blue-400 transition-colors tracking-tight">Connections</span>
-                      <span class="text-[10px] text-white/30 uppercase tracking-[0.15em] font-bold">{{ userProfile.friendCount || friends.length }} total</span>
-                    </div>
-                  </div>
-                  <div class="w-9 h-9 rounded-full bg-white/[0.03] flex items-center justify-center group-hover:bg-blue-600 transition-all duration-300">
-                    <svg class="w-5 h-5 text-white/30 group-hover:text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M9 5l7 7-7 7"></path></svg>
-                  </div>
-                </button>
+                <ConnectionsPanel
+                    :friends="friends"
+                    :total-count="userProfile.friendCount || friends.length"
+                    :is-owner="true"
+                    @refresh-friends="fetchMyFriends"
+                />
               </div>
 
             </div>
           </div>
         </aside>
 
-        <main class="flex-1 h-full flex flex-col gap-6 overflow-hidden max-w-3xl pt-2">
-
-          <div class="w-full flex flex-col gap-5 shrink-0">
-            <div class="w-full flex items-center gap-8 border-b border-white/5 pb-0 px-2">
-              <button class="text-[13px] font-extrabold text-white relative pb-3 tracking-wide">
-                Timeline
-                <div class="absolute -bottom-px left-0 w-full h-0.75 bg-linear-to-r from-blue-500 to-indigo-500 rounded-t-full shadow-[0_0_12px_rgba(59,130,246,0.6)]"></div>
-              </button>
-              <button class="text-[13px] font-bold text-white/40 hover:text-white/80 transition-colors pb-3 tracking-wide">Media</button>
-              <button class="text-[13px] font-bold text-white/40 hover:text-white/80 transition-colors pb-3 tracking-wide">Photos</button>
-              <button @click="openEditModal('privacy')" class="text-[13px] font-bold text-white/40 hover:text-white/80 transition-colors pb-3 tracking-wide ml-auto">Settings</button>
-            </div>
-
-            <PostCreator
-                :user-profile="userProfile"
-                @post-created="refreshPosts"
-                @view-avatar="viewImage('avatar')"
-            />
-          </div>
+        <main class="flex-1 h-full flex flex-col overflow-hidden max-w-3xl pt-2">
 
           <div class="w-full flex-1 overflow-y-auto custom-scrollbar flex flex-col gap-6 pb-20 pr-2 pt-1">
+
+            <div class="w-full flex flex-col gap-5 shrink-0">
+              <div class="w-full flex items-center gap-8 border-b border-white/5 pb-0 px-2">
+                <button class="text-[13px] font-extrabold text-white relative pb-3 tracking-wide">
+                  Timeline
+                  <div class="absolute -bottom-px left-0 w-full h-0.75 bg-gradient-to-r from-blue-500 to-indigo-500 rounded-t-full"></div>
+                </button>
+                <button class="text-[13px] font-bold text-white/40 hover:text-white/80 transition-colors pb-3 tracking-wide">Media</button>
+                <button class="text-[13px] font-bold text-white/40 hover:text-white/80 transition-colors pb-3 tracking-wide">Photos</button>
+                <button @click="openEditModal('privacy')" class="text-[13px] font-bold text-white/40 hover:text-white/80 transition-colors pb-3 tracking-wide ml-auto">Settings</button>
+              </div>
+
+              <PostCreator
+                  :user-profile="userProfile"
+                  @post-created="refreshPosts"
+                  @view-avatar="viewImage('avatar')"
+              />
+            </div>
+
             <div v-if="profilePosts.length > 0" class="flex flex-col gap-6">
               <FeedPost
                   v-for="post in profilePosts"
                   :key="post.id"
                   :post="post"
                   :user-profile="userProfile || undefined"
-                  @toggle-like="toggleLike"
                   @toggle-menu="toggleMenu"
                   @view-image="viewImage"
                   @open-preview="previewImage = $event"
               />
             </div>
 
-            <div v-else class="flex flex-col items-center justify-center py-24 text-center rounded-[32px] bg-white/[0.01] border border-white/[0.03] shrink-0 border-dashed backdrop-blur-sm">
-              <div class="w-16 h-16 rounded-3xl bg-white/[0.02] border border-white/[0.05] flex items-center justify-center mb-4 transform rotate-3 shadow-inner">
+            <div v-else class="flex flex-col items-center justify-center py-24 text-center rounded-4xl bg-white/1 border border-white/3 shrink-0 border-dashed backdrop-blur-sm">
+              <div class="w-16 h-16 rounded-3xl bg-white/2 border border-white/5 flex items-center justify-center mb-4 transform rotate-3">
                 <svg class="w-8 h-8 text-white/20" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10l4 4v10a2 2 0 01-2 2z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 11v5m0 0l-3-3m3 3l3-3"></path></svg>
               </div>
               <span class="text-[13px] font-bold tracking-wide text-white/40">Nothing here yet</span>
@@ -140,9 +129,9 @@
           </div>
         </main>
 
-        <aside class="w-full lg:w-[300px] xl:w-[320px] h-full flex flex-col gap-6 shrink-0 pt-2 overflow-y-auto no-scrollbar pb-6 relative z-10">
+        <aside class="w-full lg:w-75 xl:w-[320px] h-full flex flex-col gap-6 shrink-0 pt-2 overflow-y-auto no-scrollbar pb-6 relative z-10">
 
-          <div class="bg-[#0A192F]/40 backdrop-blur-2xl border border-white/[0.05] rounded-[32px] p-5 shadow-[0_8px_32px_rgba(0,0,0,0.2)] shrink-0">
+          <div class="bg-[#0A192F]/40 backdrop-blur-2xl border border-white/5 rounded-4xl p-5 shrink-0">
             <div class="flex items-center justify-between mb-5">
               <h3 class="text-[11px] font-extrabold text-white/80 tracking-widest uppercase">Suggested Friends</h3>
               <button class="text-[10px] text-blue-400 font-bold hover:text-blue-300 transition-colors uppercase tracking-wider">See All</button>
@@ -152,21 +141,21 @@
               <div v-for="person in suggestedFriends" :key="person.name" class="flex items-center justify-between group p-2 -mx-2 rounded-2xl hover:bg-white/[0.03] transition-all">
                 <div class="flex items-center gap-3 cursor-pointer">
                   <div class="relative">
-                    <img :src="person.image" class="w-10 h-10 rounded-full object-cover border border-white/10 shadow-sm" />
+                    <img :src="person.image" class="w-10 h-10 rounded-full object-cover border border-white/10" />
                   </div>
                   <div class="flex flex-col">
                     <span class="text-[13px] font-bold text-white/90 group-hover:text-blue-400 transition-colors">{{ person.name }}</span>
                     <span class="text-[10px] text-white/40 font-medium mt-0.5">{{ person.mutualCount }} mutual friends</span>
                   </div>
                 </div>
-                <button class="w-8 h-8 rounded-full bg-white/[0.05] group-hover:bg-blue-600 flex items-center justify-center text-white/60 group-hover:text-white transition-all active:scale-95 shrink-0 border border-transparent group-hover:shadow-[0_0_12px_rgba(37,99,235,0.5)]">
+                <button class="w-8 h-8 rounded-full bg-white/[0.05] group-hover:bg-blue-600 flex items-center justify-center text-white/60 group-hover:text-white transition-all active:scale-95 shrink-0 border border-transparent">
                   <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path></svg>
                 </button>
               </div>
             </div>
           </div>
 
-          <div class="bg-[#0A192F]/40 backdrop-blur-2xl border border-white/[0.05] rounded-[32px] p-5 shadow-[0_8px_32px_rgba(0,0,0,0.2)] shrink-0">
+          <div class="bg-[#0A192F]/40 backdrop-blur-2xl border border-white/[0.05] rounded-[32px] p-5 shrink-0">
             <div class="flex items-center justify-between mb-5">
               <h3 class="text-[11px] font-extrabold text-white/80 tracking-widest uppercase">Your Photos</h3>
               <button class="text-[10px] text-blue-400 font-bold hover:text-blue-300 transition-colors uppercase tracking-wider">See All</button>
@@ -177,7 +166,7 @@
                 <img :src="photo" class="w-full h-full object-cover" />
               </div>
             </div>
-            <div v-else class="w-full aspect-video rounded-2xl bg-black/20 border border-white/[0.05] flex flex-col items-center justify-center gap-2 shadow-inner">
+            <div v-else class="w-full aspect-video rounded-2xl bg-black/20 border border-white/[0.05] flex flex-col items-center justify-center gap-2">
               <svg class="w-6 h-6 text-white/20" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
               <span class="text-[9px] text-white/30 uppercase tracking-widest font-bold">No photos yet</span>
             </div>
@@ -198,7 +187,7 @@
       <Teleport to="body">
         <div v-if="isEditing" class="fixed inset-0 z-[9999] flex justify-center items-center px-4 overflow-y-auto py-10 animate-fade-in">
           <div class="absolute inset-0 bg-[#0A192F]/80 backdrop-blur-xl cursor-pointer" @click="closeEditModal"></div>
-          <div class="bg-[#051021] border border-white/[0.08] rounded-[32px] w-full max-w-lg p-8 shadow-2xl relative z-10 my-auto">
+          <div class="bg-[#051021] border border-white/[0.08] rounded-[32px] w-full max-w-lg p-8 relative z-10 my-auto">
             <button @click="closeEditModal" class="absolute top-6 right-6 p-2 text-white/50 hover:text-white bg-white/5 hover:bg-white/10 rounded-full transition-colors border border-transparent hover:border-white/10 z-10">
               <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
             </button>
@@ -255,7 +244,7 @@
 
               <div class="flex items-center justify-end gap-3 mt-10">
                 <button type="button" @click="closeEditModal" class="px-6 py-3 text-[14px] font-bold text-white/50 hover:text-white transition-colors">Cancel</button>
-                <button type="submit" class="px-8 py-3 rounded-full bg-blue-600 hover:bg-blue-500 text-white transition-all text-[14px] font-bold shadow-lg active:scale-95 flex items-center gap-2" :disabled="isSaving">
+                <button type="submit" class="px-8 py-3 rounded-full bg-blue-600 hover:bg-blue-500 text-white transition-all text-[14px] font-bold active:scale-95 flex items-center gap-2" :disabled="isSaving">
                   {{ isSaving ? 'Saving...' : 'Save Changes' }}
                 </button>
               </div>
@@ -276,6 +265,7 @@ import FeedPost from "../components/common/BasicPreview/FeedPost.vue"
 import PostPreview from "../components/common/PostPreview/PostPreview.vue"
 import UserAvatarBanner from "../components/profile/UserAvatarBanner.vue"
 import PostCreator from "../components/profile/PostCreator.vue"
+import ConnectionsPanel from "../components/common/ConnectionsPanel.vue"
 import type { Post } from '../types'
 
 interface UserProfile {
@@ -363,11 +353,12 @@ const fetchUserPosts = async () => {
           time: new Date(item.createdAt).toLocaleString(),
           content: item.content || '',
           image: item.imageUrl || null,
-          likes: item.likeCount,
-          comments: [],
+          likes: item.likeCount || 0,
+          comments: undefined,
           shares: 0,
           isLiked: item.likedByCurrentUser,
           showComments: false,
+          showLikes: false,
           commentInput: ''
         }))
   } catch (err) {
@@ -437,9 +428,19 @@ const saveProfile = async () => {
   }
 }
 
+const fetchMyFriends = async () => {
+  try {
+    const response = await api.get('/friends/my-friends');
+    friends.value = response.data;
+  } catch (err) {
+    console.error('Failed to fetch friends list', err);
+  }
+}
+
 onMounted(async () => {
   await fetchUserProfile()
   await fetchUserPosts()
+  await fetchMyFriends()
 })
 </script>
 

@@ -1,5 +1,6 @@
 package com.sentinel.controller;
 
+import com.sentinel.Validators.ValidateCurrentUser;
 import com.sentinel.model.*;
 import com.sentinel.service.LikeService;
 import com.sentinel.service.MediaService;
@@ -16,12 +17,14 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/api/likes")
-public class UserLikeController {
+public class UserLikeController extends Controller{
 
     private final LikeService likeService;
     private final MediaService mediaService;
 
-    public UserLikeController(LikeService likeService, MediaService mediaService){
+    public UserLikeController(LikeService likeService, MediaService mediaService,
+                              ValidateCurrentUser validator){
+        super(validator);
         this.likeService = likeService;
         this.mediaService = mediaService;
     }
@@ -30,25 +33,19 @@ public class UserLikeController {
     @Transactional(rollbackFor = Exception.class)
     public ResponseEntity<?> toggleLike(@RequestBody LikeRequestDto likeDto){
 
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-
-        if(auth == null || !auth.isAuthenticated()){
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
-        }
-
-        User user = (User) auth.getPrincipal();
+        User currentUser = getCurrentUser();
 
         MediaEntity media = mediaService.findById(likeDto.getMediaId());
-        boolean alreadyExists = likeService.existsByUserAndMedia(user, media);
+        boolean alreadyExists = likeService.existsByUserAndMedia(currentUser, media);
 
         int likeCount = media.getLikeCount();
 
         if(alreadyExists){
-            likeService.deleteByUserAndMedia(user, media);
+            likeService.deleteByUserAndMedia(currentUser, media);
             likeCount--;
         } else{
             LikeEntity like = new LikeEntity();
-            like.setUser(user);
+            like.setUser(currentUser);
             like.setMedia(media);
             likeService.save(like);
             likeCount++;
