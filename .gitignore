@@ -2,6 +2,8 @@
 *.iml
 .vscode/
 
+uploads/
+
 .DS_Store
 thumbs.db
 
