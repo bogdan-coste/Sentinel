@@ -1,4 +1,4 @@
-![Sentinel Banner](resources/readme/banner.jpg)
+![Sentinel Banner](resources/readme/banner.png)
 # 🛡️ Sentinel - Privacy-First Social Platform
 
 **Sentinel** is an open-source, privacy-first social media platform built with Spring Boot. Designed with digital well-being at its core, it prioritizes authentic human connections and data security over addictive engagement loops and intrusive tracking.
