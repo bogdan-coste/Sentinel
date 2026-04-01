@@ -1,52 +1,93 @@
-![Sentinel Banner](resources/readme/banner.png)
-# 🛡️ Sentinel - Privacy-First Social Platform
+<p align="center">
+  <img src="resources/readme/banner.png" alt="Sentinel Banner" width="100%">
+</p>
 
-**Sentinel** is an open-source, privacy-first social media platform built with Spring Boot. Designed with digital well-being at its core, it prioritizes authentic human connections and data security over addictive engagement loops and intrusive tracking.
+<p align="center">
+  <img src="https://img.shields.io/badge/Java-ED8B00?style=for-the-badge&logo=java&logoColor=white" />
+  <img src="https://img.shields.io/badge/Spring_Boot-6DB33F?style=for-the-badge&logo=spring-boot&logoColor=white" />
+  <img src="https://img.shields.io/badge/Vue.js-35495E?style=for-the-badge&logo=vuedotjs&logoColor=4FC08D" />
+  <img src="https://img.shields.io/badge/PostgreSQL-316192?style=for-the-badge&logo=postgresql&logoColor=white" />
+  <img src="https://img.shields.io/badge/Maintained%3F-yes-green.svg?style=for-the-badge" />
+</p>
+
+---
+
+# 🛡️ Sentinel — Privacy-First Social Platform
+
+**Sentinel** is an open-source, ethical alternative to mainstream social media. Architected for **digital well-being**, it prioritizes authentic human connection and data sovereignty over predatory engagement loops and intrusive surveillance.
+
+> **The Mission:** To prove that social platforms can be engaging and sustainable without compromising fundamental human rights to privacy.
+
+---
+
+## 📍 Table of Contents
+- [💡 Motivation](#-motivation)
+- [✨ Core Features](#-core-features)
+- [💰 Monetization Model](#-ethical-monetization-model)
+- [⚙️ Tech Stack](#️-built-with-tech-stack)
+- [📈 Performance Metrics](#-performance--security-metrics)
+- [🚀 Getting Started](#-getting-started)
+- [🌍 Open Source](#-open-source)
+
+---
 
 ## 💡 Motivation
+In today's digital landscape, mainstream networks harvest user data and employ addictive algorithms to maximize screen time. Sentinel was created as an **ethical counter-movement**. By strictly adhering to **EU GDPR standards**, eliminating third-party trackers, and introducing proactive safety for minors, Sentinel fosters a healthier digital environment.
 
-In today's digital landscape, mainstream social networks often rely on harvesting user data and employing addictive algorithms to maximize screen time. **Sentinel** was created as an ethical alternative. 
-
-The motivation behind this project is to prove that a social platform can be engaging without compromising user privacy. By strictly adhering to EU GDPR standards, completely eliminating third-party trackers, and introducing a proactive "Safeguarded Mode" for minors, Sentinel aims to foster a healthier and safer digital environment.
+---
 
 ## ✨ The "Ethical Feed" & Core Features
 
-Sentinel delivers the seamless, entertaining experience you expect from mainstream social networks, but replaces manipulative engagement loops with user-centric boundaries. 
+### 🧘 Digital Well-being
+* **Bounded Entertainment:** Personalized content feeds that respect your time. High-quality posts are surfaced alongside **enforced session limits** to prevent "doomscrolling."
+* **On-Device AI Assistant:** A smart module that studies interaction habits locally. It provides context-aware suggestions (e.g., screen-break reminders) tailored to your routine.
+* **100% Local Data:** Behavioral analysis is processed and stored **strictly on your device**. Your usage patterns never touch our backend.
 
-* **Familiar, Yet Bounded Entertainment:** Enjoy a highly engaging, personalized content feed that respects your time. Sentinel's algorithms are designed to entertain and surface high-quality posts, but they enforce healthy session limits. The system actively moderates the volume and type of content delivered in a single sitting to prevent endless "doomscrolling."
-* **Strictly Isolated Recommendation Engine**: Mainstream apps compromise privacy by suggesting connections based on invisible metrics (exposing hidden follower graphs). Sentinel's engine is strictly isolated: friend and content suggestions are generated **ONLY** based on your own explicit activity and opted-in interests. The core intent is to empower users to form **authentic, meaningful relationships** instead of performative ones, moving away from profit-driven models that compromise mental health.
-* **On-Device AI Wellbeing Assistant:** Sentinel utilizes a smart, integrated AI module to study your interaction habits and session lengths. It provides adequate, context-aware suggestions tailored to your routine—such as reminders to take a screen break, step away for a walk, or wind down for sleep.
-* **100% Local Data Storage:** To guarantee absolute privacy, all behavioral data analyzed by the Wellbeing AI is processed and stored **strictly LOCALLY** on your device. Your usage patterns, sleep schedule suggestions, and session metrics never touch our backend servers.
-* **Age-Aware Location Privacy:** For adult users (18+), location tracking is completely blocked by default. For minors, location services are enabled by default as an integrated safety measure. Crucially, this geolocation data is **NEVER** monetized, shared with third-party vendors, or used for any commercial purposes.
-* **Native 'Safeguarded Mode':** A dedicated environment for minors that dynamically adjusts engagement constraints (e.g., messaging limits, content filtering) based on the user's age, proactively monitored by preemptive moderation layers.
-* **Fully Customizable GUI:** The application interface is built from the ground up for maximum customizability. It empowers users to tailor their layouts, themes, and content delivery exactly how they want it, putting them fully in charge of their digital environment.
+### 🛡️ Privacy & Security
+* **Isolated Recommendation Engine:** Connections are generated **ONLY** based on explicit activity. We do not expose hidden follower graphs or use "shadow profiling."
+* **Age-Aware Privacy:** Location tracking is blocked by default for adults. For minors, it acts as a non-monetized safety measure.
+* **Native 'Safeguarded Mode':** A dedicated environment for minors with dynamic engagement constraints and preemptive moderation.
+
+---
 
 ## 💰 Ethical Monetization Model
+Sentinel proves that integrity is a viable business model:
+* **Contextual Ads:** Revenue is generated via non-intrusive ads based on content categories, not surveillance.
+* **Zero Brokerage:** We pledge to **NEVER** sell or trade user data.
+* **Sustainability:** Decoupling profit from harvesting proves privacy is a fundamental right, not a luxury.
 
-Sentinel is designed to be a self-sustaining platform without compromising its "Privacy-First" core. Our revenue model is built on transparency and respect for the user:
+---
 
-* **Ad-Supported, Not Surveillance-Driven**: Profit is generated through non-intrusive advertisements and strategic sponsorships.
-* **Zero Data Brokerage**: We strictly pledge to **NEVER** sell, rent, or trade user data to third-party vendors or commercial brokers.
-* **Contextual Advertising**: Ads are served based on general content categories or opted-in interests, completely avoiding invasive cross-site tracking or "shadow profiling".
-* **Sustainability through Integrity**: By decoupling profit from data harvesting, Sentinel proves that a social network can be financially viable while treating user privacy as a fundamental human right.
-  
 ## ⚙️ Built With (Tech Stack)
 
-Sentinel is architected with scalability and security in mind, utilizing a modern enterprise technology stack:
+| Layer | Technology |
+| :--- | :--- |
+| **Backend** | Java 17+, Spring Boot, Spring Security |
+| **Frontend** | Vue.js 3 (Composition API) |
+| **Database** | PostgreSQL, Hibernate / Spring Data JPA |
+| **Auth** | OAuth2 / JWT (Stateless Authentication) |
+| **AI/ML** | Python, ONNX Runtime (On-device Inference) |
 
-* **Backend:** Java, Spring Boot, Spring Security
-* **Frontend:** Vue.js
-* **Database:** PostgreSQL, Hibernate / Spring Data JPA
-* **Authentication:** OAuth2 / JWT (JSON Web Tokens)
+---
 
 ## 📈 Performance & Security Metrics
 
-* **API Efficiency:** Delivers content across 20+ RESTful API endpoints with an average response time of under 100ms.
-* **Zero Data Retention Moderation:** Implemented preemptive moderation layers that analyze and filter hazardous content in under 200ms with zero server-side data retention.
-* **GDPR Compliance:** Architected to achieve 100% compliance with EU data protection standards by intentionally excluding third-party tracking metrics.
-
-## 🌍 Open Source
-
-Sentinel is proudly **Open Source**. We believe that privacy-centric tools should be completely transparent. Developers, security researchers, and privacy advocates are highly encouraged to explore the codebase, audit the ethical recommendation algorithms, and contribute to building a safer social web.
+| Metric | Target / Result |
+| :--- | :--- |
+| **API Efficiency** | < 100ms average response (20+ endpoints) |
+| **Preemptive Moderation** | < 200ms latency with zero data retention |
+| **Compliance** | 100% EU GDPR Compliant (Zero 3rd-party trackers) |
 
 ---
+
+## 🚀 Getting Started
+
+### Prerequisites
+- JDK 17+
+- Node.js & npm
+- PostgreSQL Instance
+
+### Installation
+1. **Clone the repository**
+   ```bash
+   git clone [https://github.com/bogdan-coste/Sentinel.git](https://github.com/bogdan-coste/Sentinel.git)
