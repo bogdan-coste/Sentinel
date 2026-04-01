@@ -8,6 +8,7 @@ import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
 import org.slf4j.Logger;
@@ -25,6 +26,7 @@ public class EmailService {
         this.templateEngine = templateEngine;
     }
 
+    @Transactional(rollbackFor = Exception.class)
     @Async
     public void sendVerificationEmail(MailBody mailBody) {
         try{

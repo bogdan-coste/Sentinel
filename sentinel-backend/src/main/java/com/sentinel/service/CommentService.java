@@ -5,6 +5,7 @@ import com.sentinel.model.MediaEntity;
 import com.sentinel.model.User;
 import com.sentinel.repository.CommentRepository;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -21,6 +22,7 @@ public class CommentService {
         return repo.findByPostIdOrderByCreatedAtDesc(mediaId);
     }
 
+    @Transactional(rollbackFor = Exception.class)
     public CommentEntity addComment(MediaEntity media, User author, String content){
         CommentEntity comment = new CommentEntity();
         comment.setAuthor(author);

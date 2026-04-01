@@ -4,24 +4,35 @@ import com.sentinel.model.MediaEntity;
 import com.sentinel.model.MediaType;
 import com.sentinel.model.User;
 import com.sentinel.repository.MediaRepository;
-import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import javax.print.attribute.standard.Media;
 import java.util.List;
 import java.util.Optional;
 
 @Service
+@Transactional(readOnly = true)
 public class MediaService {
 
-    private MediaRepository repo;
+    private final MediaRepository repo;
 
     public MediaService(MediaRepository repo){
         this.repo = repo;
     }
 
+    @Transactional
     public void save(MediaEntity media){
         repo.save(media);
+    }
+
+    @Transactional
+    public void deleteByOwnerAndTypeAndFilename(User user, MediaType type, String filename){
+        repo.deleteByOwnerAndTypeAndFilename(user, type, filename);
+    }
+
+    @Transactional
+    public void deleteById(Long mediaId){
+        repo.deleteById(mediaId);
     }
 
     public MediaEntity findById(Long id){
@@ -52,13 +63,5 @@ public class MediaService {
 
     public Optional<MediaEntity> findByOwnerAndTypeAndFilename(User user, MediaType type, String filename){
         return repo.findByOwnerAndTypeAndFilename(user, type, filename);
-    }
-
-    public void deleteByOwnerAndTypeAndFilename(User user, MediaType type, String filename){
-        repo.deleteByOwnerAndTypeAndFilename(user, type, filename);
-    }
-
-    public void deleteById(Long mediaId){
-        repo.deleteById(mediaId);
     }
 }

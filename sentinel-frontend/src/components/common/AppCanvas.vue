@@ -2,7 +2,7 @@
   <div class="min-h-screen w-full relative">
 
     <div
-        class="fixed inset-0 bg-[radial-gradient(circle_at_top_left,_#1A4B84_0%,_#051A30_100%)] -z-50"
+        class="fixed inset-0 bg-[radial-gradient(circle_at_top_left,#1A4B84_0%,#051A30_100%)] -z-50"
     ></div>
 
     <div class="fixed inset-0 bg-black/10 pointer-events-none -z-40"></div>

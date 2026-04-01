@@ -5,6 +5,7 @@ import com.sentinel.model.MediaEntity;
 import com.sentinel.model.User;
 import com.sentinel.repository.LikeRepository;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -21,6 +22,7 @@ public class LikeService {
         return repo.existsByUserAndMedia(user, media);
     }
 
+    @Transactional(rollbackFor = Exception.class)
     public LikeEntity save(LikeEntity like){
         return repo.save(like);
     }
@@ -29,6 +31,7 @@ public class LikeService {
         return repo.findByMediaId(mediaId);
     }
 
+    @Transactional(rollbackFor = Exception.class)
     public void deleteByUserAndMedia(User user, MediaEntity media){
         repo.deleteByUserAndMedia(user, media);
     }

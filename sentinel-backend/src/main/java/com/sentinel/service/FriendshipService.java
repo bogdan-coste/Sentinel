@@ -7,6 +7,7 @@ import com.sentinel.repository.FriendshipRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
@@ -53,10 +54,12 @@ public class FriendshipService {
         return repo.findFriendshipBetween(user1, user2);
     }
 
+    @Transactional(rollbackFor = Exception.class)
     public void deleteFriendship(Friendship friendship) {
         repo.delete(friendship);
     }
 
+    @Transactional(rollbackFor = Exception.class)
     public void save(Friendship friendship){
         repo.save(friendship);
     }

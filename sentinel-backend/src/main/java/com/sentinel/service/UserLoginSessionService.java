@@ -5,10 +5,12 @@ import com.sentinel.repository.UserLoginSessionRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.Optional;
 
+@Transactional(readOnly = true)
 @Service
 public class UserLoginSessionService {
 
@@ -23,6 +25,7 @@ public class UserLoginSessionService {
         return this.repo.findByTokenAndNotExpired(token, LocalDateTime.now());
     }
 
+    @Transactional
     public void save(UserLoginSession userLoginSession){
         repo.save(userLoginSession);
     }

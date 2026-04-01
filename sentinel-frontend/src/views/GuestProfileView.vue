@@ -112,7 +112,7 @@
               <div class="w-full flex items-center gap-8 border-b border-white/5 pb-0 px-2">
                 <button class="text-[13px] font-extrabold text-white relative pb-3 tracking-wide">
                   Timeline
-                  <div class="absolute -bottom-px left-0 w-full h-0.75 bg-gradient-to-r from-blue-500 to-indigo-500 rounded-t-full"></div>
+                  <div class="absolute -bottom-px left-0 w-full h-0.75 bg-linear-to-r from-blue-500 to-indigo-500 rounded-t-full"></div>
                 </button>
                 <button class="text-[13px] font-bold text-white/40 hover:text-white/80 transition-colors pb-3 tracking-wide">Media</button>
                 <button class="text-[13px] font-bold text-white/40 hover:text-white/80 transition-colors pb-3 tracking-wide">Photos</button>

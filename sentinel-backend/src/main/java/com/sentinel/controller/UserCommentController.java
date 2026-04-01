@@ -26,7 +26,6 @@ public class UserCommentController {
         this.mediaService = mediaService;
     }
 
-    @Transactional(rollbackFor = Exception.class)
     @PostMapping
     public ResponseEntity<?> addComment(@RequestBody CommentRequestDto commentDto){
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
