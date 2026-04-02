@@ -9,75 +9,86 @@
   <img src="https://img.shields.io/badge/TypeScript-007ACC?style=for-the-badge&logo=typescript&logoColor=white" />
   <img src="https://img.shields.io/badge/PostgreSQL-316192?style=for-the-badge&logo=postgresql&logoColor=white" />
   <img src="https://img.shields.io/badge/Docker-2496ED?style=for-the-badge&logo=docker&logoColor=white" />
-  <img src="https://img.shields.io/badge/JWT-000000?style=for-the-badge&logo=JSON%20web%20tokens&logoColor=white" />
 </p>
 
 ---
 
-# **🛡️ Sentinel: Social Media, But Human Again.**
+# **🛡️ Sentinel — Privacy-Centric Social Infrastructure**
 
-**Sentinel** is an open-source alternative to mainstream social media. It is designed for **digital well-being**, prioritizing authentic human connection and data sovereignty over addictive loops and intrusive surveillance.
-
-> **The Mission:** **To prove that social platforms can be engaging without compromising your fundamental right to privacy.**
+**Sentinel** is a full-stack social networking platform engineered for high performance and data sovereignty. It provides a secure, modular environment for authentic interaction, built on a modern **Java** and **Vue.js** ecosystem.
 
 ---
 
-## **🌟 Why Sentinel? (The User Experience)**
+## **🚀 Platform Capabilities**
 
-Mainstream networks turn you into a product. **Sentinel puts you back in the driver's seat:**
+Sentinel provides a streamlined social experience focused on functional utility and user data protection:
 
-* **🧘 Ethical Feed:** Our algorithm surfaces quality content that respects your time. Once you're caught up, Sentinel encourages you to step away and enjoy the real world.
-* **🕵️ Radical Privacy:** We don't track you across the web. Connections are built on your explicit interests, not "shadow profiling" or hidden data harvesting.
-* **🧒 Native Safety:** A dedicated environment for minors with built-in protection and engagement constraints as a default, not an afterthought.
-* **🚫 Clean Monetization:** We use contextual ads based on what you’re viewing right now—never on your private browsing history or personal identity.
+* **⚡ Optimized Content Delivery:** High-performance feed engine utilizing server-side filtering to surface relevant content.
+* **🔒 Sovereign Data Model:** User activity and behavioral analysis remain strictly **on-device**, utilizing localized processing.
+* **🛡️ Built-in Safeguards:** Native mode for minors with dynamic engagement constraints and preemptive moderation protocols.
+* **📈 Contextual Advertising:** Monetization through category-based content matching, eliminating the need for cross-site tracking.
 
 ---
 
-## **🚀 Quick Start**
+## **🏗️ Architecture & Engineering Deep Dive**
 
-Launch the entire Sentinel ecosystem (Frontend, Backend, and Database) in minutes using Docker.
+Sentinel is built on a foundation of decoupled, scalable, and maintainable software patterns designed for enterprise-grade stability.
+
+### **🏛️ Frontend: Feature-Driven Design (FDD)**
+The frontend is built with **Vue.js 3** and **TypeScript**, organized into an FDD architecture to ensure modularity.
+* **Domain Isolation:** Logical modules (**Auth, Post, Chat, User**) are self-contained. Changes to one domain do not impact others.
+* **The Barrel Pattern:** Using `index.ts` files as "Public APIs" for each feature to enforce strict encapsulation and prevent spaghetti code.
+* **Scalable Type System:** Decentralized TypeScript interfaces ensure type safety without the bottlenecks of monolithic type files.
+
+### **☕ Backend: Stateless & High-Performance**
+A robust, stateless backend designed for high concurrency following the industry gold standard.
+* **Stateless Authentication (JWT):** Utilizes **Spring Security** with **JSON Web Tokens**. This allows the backend to scale horizontally without server-side session dependencies.
+* **Sub-100ms Latency:** Achieved through specialized **DTOs** and optimized **JPA/Hibernate** interogations, ensuring rapid data delivery.
+* **Persistence Layer:** **PostgreSQL** with strategic indexing and relational integrity for high-speed data retrieval.
+
+### **🔒 Innovation: Edge AI & Privacy**
+* **Local Processing:** Sentinel is architected for **on-device inference**. Behavioral analysis tasks stay strictly on the user's hardware.
+* **Sovereign Analytics:** By analyzing habits locally, the server remains "blind" to private user patterns, fundamentally reducing the risk of centralized data breaches.
+
+---
+
+## **⚙️ Tech Stack Summary**
+
+| Layer | Technology |
+| :--- | :--- |
+| **Backend** | Java 17+, Spring Boot, Spring Security |
+| **Frontend** | Vue.js 3 (Composition API), TypeScript, Vite |
+| **Database** | PostgreSQL |
+| **Auth** | Stateless JWT (JSON Web Tokens) |
+| **Infrastructure** | Docker, Docker Compose |
+| **AI/ML** | Architectural support for ONNX/Python local inference |
+
+---
+
+## **🏁 Getting Started**
 
 ### **Prerequisites**
-* **Docker** and **Docker Compose** installed.
+* **Docker** & **Docker Compose**
 
-### **Installation**
+### **Deployment**
 1.  **Clone the repository:**
     ```bash
     git clone [https://github.com/bogdan-coste/Sentinel.git](https://github.com/bogdan-coste/Sentinel.git)
     cd Sentinel
     ```
 
-2.  **Launch everything:**
+2.  **Launch the infrastructure:**
     ```bash
     docker compose up -d
     ```
 
-3.  **Access the App:**
-    Open your browser and go to **`http://localhost:5173`**. You’re ready to go!
-
----
-
-## **🛠️ Technical Achievements**
-
-Sentinel isn't just ethical; it's engineered for scale and maintainability using modern industry standards.
-
-### **🏛️ Frontend: Feature-Driven Design (FDD)**
-The Vue.js 3 application was recently refactored from a monolithic structure into a modular, **Feature-Driven** architecture.
-* **Domain Isolation:** Features like `Auth`, `Post`, `Chat`, and `User` are self-contained with their own components, logic, and types.
-* **Scalable Types:** Decentralized TypeScript interfaces prevent "god-file" syndrome and ensure type safety across the board.
-* **Clean Imports:** Advanced path aliasing (`@features`, `@shared`) and Barrel files (`index.ts`) reduce code clutter and import complexity.
-
-### **⚙️ Backend: Robust Java Ecosystem**
-* **Stateless Security:** Built with **Spring Boot** and **Spring Security**, utilizing **JWT** for secure, scalable authentication.
-* **Database Integrity:** Powered by **PostgreSQL** with optimized JPA queries, maintaining a sub-100ms average API response time.
-* **Edge-AI Ready:** The architecture is designed to support on-device inference, allowing behavioral analysis to stay 100% local to the user's hardware.
+3.  **Access the application:**
+    The frontend is available at **`http://localhost:5173`**.
 
 ---
 
 ## **🌍 Open Source & Contributing**
 
-Sentinel is built on the belief that **transparency is the only guarantee of privacy.** We are a community-driven project. Whether you want to fix a bug, suggest a feature, or improve the documentation, we welcome your contributions! Feel free to open an issue or submit a Pull Request.
+Sentinel is an **open-source project**. We welcome contributions regarding performance optimizations, security audits, and feature enhancements.
 
----
-
-**Sentinel — Privacy is a right, not a luxury.**
+**Sentinel — Privacy-First. Performance-Driven.**
