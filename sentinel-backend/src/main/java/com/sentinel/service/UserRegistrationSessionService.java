@@ -1,7 +1,7 @@
 package com.sentinel.service;
 
-import com.sentinel.model.User;
-import com.sentinel.model.UserRegisterSession;
+import com.sentinel.entity.UserEntity;
+import com.sentinel.entity.UserRegistrationEntity;
 import com.sentinel.repository.UserRegisterSessionRepository;
 import com.sentinel.utils.TokenGenerator;
 import org.springframework.stereotype.Service;
@@ -19,20 +19,20 @@ public class UserRegistrationSessionService {
         this.tokenGenerator = tokenGenerator;
     }
 
-    public UserRegisterSession createSessionForUser(User user) {
-        UserRegisterSession session = new UserRegisterSession();
+    public UserRegistrationEntity createSessionForUser(UserEntity userEntity) {
+        UserRegistrationEntity session = new UserRegistrationEntity();
         session.setSessionToken(tokenGenerator.generateToken());
         session.setExpirationDate(LocalDateTime.now().plusDays(2));
-        session.setUser(user);
+        session.setUserEntity(userEntity);
         return repo.save(session);
     }
 
-    public UserRegisterSession findBySessionToken(String token) {
+    public UserRegistrationEntity findBySessionToken(String token) {
         return repo.findBySessionToken(token)
                 .orElseThrow(() -> new RuntimeException("Token invalid"));
     }
 
-    public void save(UserRegisterSession userRegisterSession){
-        repo.save(userRegisterSession);
+    public void save(UserRegistrationEntity userRegistrationEntity){
+        repo.save(userRegistrationEntity);
     }
 }

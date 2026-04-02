@@ -1,15 +1,14 @@
 import { createRouter, createWebHistory } from "vue-router";
-import MainPageView from "../views/MainPageView.vue";
-import DashboardView from "../views/DashboardView.vue";
-import AuthenticateView from "../views/AuthenticateView.vue";
-import AuthResultView from "../views/AuthResultView.vue";
-import VerifyView from "../views/VerifyView.vue";
-import ProfileView from "../views/ProfileView.vue";
-import api from "../service/api";
-import MessageView from "../views/MessageView.vue";
-import SettingsView from "../views/SettingsView.vue";
-import CommentDebug from "../views/CommentDebug.vue";
-import GuestProfileView from "../views/GuestProfileView.vue";
+import api from "@shared/api/api";
+import MainPageView from "@views/main/MainPageView.vue";
+import DashboardView from "@views/dashboard/DashboardView.vue";
+import AuthenticateView from "@views/auth/AuthenticateView.vue";
+import AuthResultView from "@views/auth/AuthResultView.vue";
+import VerifyView from "@views/auth/VerifyView.vue";
+import ProfileView from "@views/profile/ProfileView.vue";
+import GuestProfileView from "@views/profile/GuestProfileView.vue";
+import MessageView from "@views/messages/MessageView.vue";
+import SettingsView from "@views/settings/SettingsView.vue";
 
 const routes = [
     {
@@ -51,11 +50,6 @@ const routes = [
         name: 'main',
         component: MainPageView,
         meta: { requiresGuest: true }
-    },
-    {
-        path: '/commentDebug',
-        name: 'commentDebug',
-        component: CommentDebug
     },
     {
         path: '/authenticate',

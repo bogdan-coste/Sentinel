@@ -1,9 +1,7 @@
 package com.sentinel.service;
 
-import com.sentinel.model.UserLoginSession;
+import com.sentinel.entity.UserLoginEntity;
 import com.sentinel.repository.UserLoginSessionRepository;
-import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -20,13 +18,13 @@ public class UserLoginSessionService {
         this.repo = repo;
     }
 
-    public Optional<UserLoginSession> findValidSession(String token){
+    public Optional<UserLoginEntity> findValidSession(String token){
 
         return this.repo.findByTokenAndNotExpired(token, LocalDateTime.now());
     }
 
     @Transactional
-    public void save(UserLoginSession userLoginSession){
-        repo.save(userLoginSession);
+    public void save(UserLoginEntity userLoginEntity){
+        repo.save(userLoginEntity);
     }
 }

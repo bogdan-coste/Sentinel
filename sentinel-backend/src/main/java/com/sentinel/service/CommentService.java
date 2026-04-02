@@ -1,8 +1,8 @@
 package com.sentinel.service;
 
-import com.sentinel.model.CommentEntity;
-import com.sentinel.model.MediaEntity;
-import com.sentinel.model.User;
+import com.sentinel.entity.CommentEntity;
+import com.sentinel.entity.MediaEntity;
+import com.sentinel.entity.UserEntity;
 import com.sentinel.repository.CommentRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -23,7 +23,7 @@ public class CommentService {
     }
 
     @Transactional(rollbackFor = Exception.class)
-    public CommentEntity addComment(MediaEntity media, User author, String content){
+    public CommentEntity addComment(MediaEntity media, UserEntity author, String content){
         CommentEntity comment = new CommentEntity();
         comment.setAuthor(author);
         comment.setPost(media);

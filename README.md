@@ -32,7 +32,7 @@
 ---
 
 ## 💡 Motivation
-In today's digital landscape, mainstream networks harvest user data and employ addictive algorithms to maximize screen time. Sentinel was created as an **ethical counter-movement**. By strictly adhering to **EU GDPR standards**, eliminating third-party trackers, and introducing proactive safety for minors, Sentinel fosters a healthier digital environment.
+In today's digital landscape, mainstream networks harvest userEntity data and employ addictive algorithms to maximize screen time. Sentinel was created as an **ethical counter-movement**. By strictly adhering to **EU GDPR standards**, eliminating third-party trackers, and introducing proactive safety for minors, Sentinel fosters a healthier digital environment.
 
 ---
 
@@ -53,7 +53,7 @@ In today's digital landscape, mainstream networks harvest user data and employ a
 ## 💰 Ethical Monetization Model
 Sentinel proves that integrity is a viable business model:
 * **Contextual Ads:** Revenue is generated via non-intrusive ads based on content categories, not surveillance.
-* **Zero Brokerage:** We pledge to **NEVER** sell or trade user data.
+* **Zero Brokerage:** We pledge to **NEVER** sell or trade userEntity data.
 * **Sustainability:** Decoupling profit from harvesting proves privacy is a fundamental right, not a luxury.
 
 ---

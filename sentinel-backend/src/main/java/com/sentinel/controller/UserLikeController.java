@@ -1,13 +1,13 @@
 package com.sentinel.controller;
 
-import com.sentinel.Validators.ValidateCurrentUser;
-import com.sentinel.model.*;
+import com.sentinel.controller.base.Controller;
+import com.sentinel.security.ValidateCurrentUser;
+import com.sentinel.dto.request.LikeReq;
+import com.sentinel.dto.response.LikeRes;
+import com.sentinel.entity.*;
 import com.sentinel.service.LikeService;
 import com.sentinel.service.MediaService;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
@@ -17,7 +17,7 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/api/likes")
-public class UserLikeController extends Controller{
+public class UserLikeController extends Controller {
 
     private final LikeService likeService;
     private final MediaService mediaService;
@@ -31,21 +31,21 @@ public class UserLikeController extends Controller{
 
     @PostMapping
     @Transactional(rollbackFor = Exception.class)
-    public ResponseEntity<?> toggleLike(@RequestBody LikeRequestDto likeDto){
+    public ResponseEntity<?> toggleLike(@RequestBody LikeReq likeDto){
 
-        User currentUser = getCurrentUser();
+        UserEntity currentUserEntity = getCurrentUser();
 
         MediaEntity media = mediaService.findById(likeDto.getMediaId());
-        boolean alreadyExists = likeService.existsByUserAndMedia(currentUser, media);
+        boolean alreadyExists = likeService.existsByUserAndMedia(currentUserEntity, media);
 
         int likeCount = media.getLikeCount();
 
         if(alreadyExists){
-            likeService.deleteByUserAndMedia(currentUser, media);
+            likeService.deleteByUserAndMedia(currentUserEntity, media);
             likeCount--;
         } else{
             LikeEntity like = new LikeEntity();
-            like.setUser(currentUser);
+            like.setUserEntity(currentUserEntity);
             like.setMedia(media);
             likeService.save(like);
             likeCount++;
@@ -63,7 +63,7 @@ public class UserLikeController extends Controller{
     @GetMapping("/media/{mediaId}/likes")
     public ResponseEntity<?> getLikesForMedia(@PathVariable Long mediaId){
         List<LikeEntity> likes = likeService.findByMediaId(mediaId);
-        List<LikeResponseDto> likeDto = likes.stream().map(LikeResponseDto::fromEntity).toList();
+        List<LikeRes> likeDto = likes.stream().map(LikeRes::fromEntity).toList();
         return ResponseEntity.ok().body(likeDto);
     }
 }

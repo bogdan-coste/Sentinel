@@ -1,7 +1,10 @@
 package com.sentinel.controller;
 
-import com.sentinel.Validators.ValidateCurrentUser;
-import com.sentinel.model.*;
+import com.sentinel.controller.base.Controller;
+import com.sentinel.security.ValidateCurrentUser;
+import com.sentinel.dto.request.FriendshipReq;
+import com.sentinel.enums.FriendshipStatus;
+import com.sentinel.entity.*;
 import com.sentinel.service.FriendshipService;
 import com.sentinel.service.UserService;
 import org.springframework.http.HttpStatus;
@@ -17,7 +20,7 @@ import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("api/friends")
-public class UserFriendshipController extends Controller{
+public class UserFriendshipController extends Controller {
 
     private final FriendshipService friendshipService;
     private final UserService userService;
@@ -31,25 +34,25 @@ public class UserFriendshipController extends Controller{
 
     @Transactional(rollbackFor = Exception.class)
     @PostMapping("/add-friend")
-    public ResponseEntity<?> addFriend(@RequestBody FriendshipRequestDto request){
-        User currentUser = getCurrentUser();
+    public ResponseEntity<?> addFriend(@RequestBody FriendshipReq request){
+        UserEntity currentUserEntity = getCurrentUser();
 
-        Optional<User> targetUser = userService.findByPublicId(request.getPublicId());
+        Optional<UserEntity> targetUser = userService.findByPublicId(request.getPublicId());
 
         if(targetUser.isEmpty()){
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
 
-        if(currentUser.getId().equals(targetUser.get().getId())){
+        if(currentUserEntity.getId().equals(targetUser.get().getId())){
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of("Error", "You can't add youself as a friend."));
         }
 
-        Optional<Friendship> existingFriendship = friendshipService.findFriendshipBetween(currentUser, targetUser.get());
+        Optional<FriendshipEntity> existingFriendship = friendshipService.findFriendshipBetween(currentUserEntity, targetUser.get());
         if(existingFriendship.isPresent()){
             return ResponseEntity.status(HttpStatus.CONFLICT).body(Map.of("Error", "A friendship or pending request already exists between these users."));
         }
 
-        Optional<Friendship> friendship = friendshipService.createFriendship(currentUser, targetUser.get());
+        Optional<FriendshipEntity> friendship = friendshipService.createFriendship(currentUserEntity, targetUser.get());
 
         if(friendship.isEmpty()){
             return ResponseEntity.status(HttpStatus.CONFLICT).body(Map.of("Error", "Failed to create friend request."));
@@ -60,20 +63,20 @@ public class UserFriendshipController extends Controller{
 
     @Transactional(rollbackFor = Exception.class)
     @DeleteMapping("/remove-friend")
-    public ResponseEntity<?> removeFriend(@RequestBody FriendshipRequestDto request){
-        User currentUser = getCurrentUser();
+    public ResponseEntity<?> removeFriend(@RequestBody FriendshipReq request){
+        UserEntity currentUserEntity = getCurrentUser();
 
-        Optional<User> targetUser = userService.findByPublicId(request.getPublicId());
+        Optional<UserEntity> targetUser = userService.findByPublicId(request.getPublicId());
 
         if(targetUser.isEmpty()){
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
 
-        if(currentUser.getId().equals(targetUser.get().getId())){
+        if(currentUserEntity.getId().equals(targetUser.get().getId())){
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of("Error", "You can't remove yourself as a friend."));
         }
 
-        Optional<Friendship> friendship = friendshipService.findFriendshipBetween(currentUser, targetUser.get());
+        Optional<FriendshipEntity> friendship = friendshipService.findFriendshipBetween(currentUserEntity, targetUser.get());
 
         if(friendship.isEmpty()){
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
@@ -90,10 +93,10 @@ public class UserFriendshipController extends Controller{
             targetUser.get().setFriendCount(targetUserFriendCount);
             userService.save(targetUser.get());
 
-            int currentUserFriendCount = currentUser.getFriendCount();
+            int currentUserFriendCount = currentUserEntity.getFriendCount();
             currentUserFriendCount--;
-            currentUser.setFriendCount(currentUserFriendCount);
-            userService.save(currentUser);
+            currentUserEntity.setFriendCount(currentUserFriendCount);
+            userService.save(currentUserEntity);
         }
 
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
@@ -101,20 +104,20 @@ public class UserFriendshipController extends Controller{
 
     @Transactional(rollbackFor = Exception.class)
     @PostMapping("/accept-request")
-    public ResponseEntity<?> acceptRequest(@RequestBody FriendshipRequestDto request){
-        User currentUser = getCurrentUser();
+    public ResponseEntity<?> acceptRequest(@RequestBody FriendshipReq request){
+        UserEntity currentUserEntity = getCurrentUser();
 
-        Optional<User> targetUser = userService.findByPublicId(request.getPublicId());
+        Optional<UserEntity> targetUser = userService.findByPublicId(request.getPublicId());
 
         if(targetUser.isEmpty()){
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
 
-        if(currentUser.getId().equals(targetUser.get().getId())){
+        if(currentUserEntity.getId().equals(targetUser.get().getId())){
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of("Error", "You can't accept your own friend request."));
         }
 
-        Optional<Friendship> friendship = friendshipService.findFriendshipBetween(currentUser, targetUser.get());
+        Optional<FriendshipEntity> friendship = friendshipService.findFriendshipBetween(currentUserEntity, targetUser.get());
 
         if(friendship.isEmpty()){
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
@@ -125,10 +128,10 @@ public class UserFriendshipController extends Controller{
                     .body(Map.of("error", "Friend request is not pending or already accepted"));
         }
 
-        int currentUserFriendCount = currentUser.getFriendCount();
+        int currentUserFriendCount = currentUserEntity.getFriendCount();
         currentUserFriendCount++;
-        currentUser.setFriendCount(currentUserFriendCount);
-        userService.save(currentUser);
+        currentUserEntity.setFriendCount(currentUserFriendCount);
+        userService.save(currentUserEntity);
 
         int targetUserFriendCount = targetUser.get().getFriendCount();
         targetUserFriendCount++;
@@ -143,16 +146,16 @@ public class UserFriendshipController extends Controller{
 
     @GetMapping("/pending-requests")
     public ResponseEntity<?> getPendingRequests() {
-        User currentUser = getCurrentUser();
+        UserEntity currentUserEntity = getCurrentUser();
 
-        List<Friendship> pendingIncomingRequests = friendshipService.findReceivedPendingRequests(currentUser);
+        List<FriendshipEntity> pendingIncomingRequests = friendshipService.findReceivedPendingRequests(currentUserEntity);
 
         List<Map<String, Object>> incomingRequestMapList = pendingIncomingRequests.stream()
                 .map(friendship -> {
                     Map<String, Object> requestMap = new HashMap<>();
-                    User sender = friendship.getUser1().getId().equals(currentUser.getId())
-                            ? friendship.getUser2()
-                            : friendship.getUser1();
+                    UserEntity sender = friendship.getUserEntity1().getId().equals(currentUserEntity.getId())
+                            ? friendship.getUserEntity2()
+                            : friendship.getUserEntity1();
                     requestMap.put("publicId", sender.getPublicId());
                     requestMap.put("name", sender.getName());
                     requestMap.put("username", sender.getUsername());
@@ -171,9 +174,9 @@ public class UserFriendshipController extends Controller{
 
     @GetMapping("/my-friends")
     public ResponseEntity<?> getMyFriends() {
-        User currentUser = getCurrentUser();
+        UserEntity currentUserEntity = getCurrentUser();
 
-        List<User> myFriends = friendshipService.findFriends(currentUser);
+        List<UserEntity> myFriends = friendshipService.findFriends(currentUserEntity);
 
         List<Map<String, Object>> response = myFriends.stream().map(friend -> {
             Map<String, Object> map = new HashMap<>();

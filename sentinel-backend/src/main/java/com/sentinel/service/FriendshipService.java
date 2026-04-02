@@ -1,11 +1,9 @@
 package com.sentinel.service;
 
-import com.sentinel.model.Friendship;
-import com.sentinel.model.FriendshipStatus;
-import com.sentinel.model.User;
+import com.sentinel.entity.FriendshipEntity;
+import com.sentinel.entity.UserEntity;
+import com.sentinel.enums.FriendshipStatus;
 import com.sentinel.repository.FriendshipRepository;
-import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -21,51 +19,51 @@ public class FriendshipService {
         this.repo = repo;
     }
 
-    public Optional<Friendship> createFriendship(User userA, User userB) {
-        User user1 = userA.getId() < userB.getId() ? userA : userB;
-        User user2 = user1 == userA ? userB : userA;
+    public Optional<FriendshipEntity> createFriendship(UserEntity userEntityA, UserEntity userEntityB) {
+        UserEntity userEntity1 = userEntityA.getId() < userEntityB.getId() ? userEntityA : userEntityB;
+        UserEntity userEntity2 = userEntity1 == userEntityA ? userEntityB : userEntityA;
 
-        Optional<Friendship> existing = repo.findByUser1AndUser2(user1, user2);
+        Optional<FriendshipEntity> existing = repo.findByUser1AndUser2(userEntity1, userEntity2);
         if (existing.isPresent()) {
             return Optional.empty();
         }
 
-        Friendship newFriendship = new Friendship();
-        newFriendship.setUser1(user1);
-        newFriendship.setUser2(user2);
-        newFriendship.setStatus(FriendshipStatus.PENDING);
-        repo.save(newFriendship);
-        return Optional.of(newFriendship);
+        FriendshipEntity newFriendshipEntity = new FriendshipEntity();
+        newFriendshipEntity.setUserEntity1(userEntity1);
+        newFriendshipEntity.setUserEntity2(userEntity2);
+        newFriendshipEntity.setStatus(FriendshipStatus.PENDING);
+        repo.save(newFriendshipEntity);
+        return Optional.of(newFriendshipEntity);
     }
 
-    public Optional<Friendship> areFriends(User user1, User user2){
-        return repo.findByUser1AndUser2(user1, user2);
+    public Optional<FriendshipEntity> areFriends(UserEntity userEntity1, UserEntity userEntity2){
+        return repo.findByUser1AndUser2(userEntity1, userEntity2);
     }
 
-    public List<User> findFriends(User user){
-        return repo.findFriends(user);
+    public List<UserEntity> findFriends(UserEntity userEntity){
+        return repo.findFriends(userEntity);
     }
 
-    public boolean existsByUser1AndUser2(User user1, User user2){
-        return repo.existsByUser1AndUser2(user1, user2);
+    public boolean existsByUser1AndUser2(UserEntity userEntity1, UserEntity userEntity2){
+        return repo.existsByUser1AndUser2(userEntity1, userEntity2);
     }
 
-    public Optional<Friendship> findFriendshipBetween(User user1, User user2) {
-        return repo.findFriendshipBetween(user1, user2);
-    }
-
-    @Transactional(rollbackFor = Exception.class)
-    public void deleteFriendship(Friendship friendship) {
-        repo.delete(friendship);
+    public Optional<FriendshipEntity> findFriendshipBetween(UserEntity userEntity1, UserEntity userEntity2) {
+        return repo.findFriendshipBetween(userEntity1, userEntity2);
     }
 
     @Transactional(rollbackFor = Exception.class)
-    public void save(Friendship friendship){
-        repo.save(friendship);
+    public void deleteFriendship(FriendshipEntity friendshipEntity) {
+        repo.delete(friendshipEntity);
     }
 
-    public List<Friendship> findReceivedPendingRequests(User user){
-        return repo.findPendingRequestsForUser(user);
+    @Transactional(rollbackFor = Exception.class)
+    public void save(FriendshipEntity friendshipEntity){
+        repo.save(friendshipEntity);
+    }
+
+    public List<FriendshipEntity> findReceivedPendingRequests(UserEntity userEntity){
+        return repo.findPendingRequestsForUser(userEntity);
 
     }
 }

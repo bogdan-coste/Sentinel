@@ -1,8 +1,8 @@
 package com.sentinel.service;
 
-import com.sentinel.model.MediaEntity;
-import com.sentinel.model.MediaType;
-import com.sentinel.model.User;
+import com.sentinel.entity.MediaEntity;
+import com.sentinel.entity.UserEntity;
+import com.sentinel.enums.MediaType;
 import com.sentinel.repository.MediaRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -26,8 +26,8 @@ public class MediaService {
     }
 
     @Transactional
-    public void deleteByOwnerAndTypeAndFilename(User user, MediaType type, String filename){
-        repo.deleteByOwnerAndTypeAndFilename(user, type, filename);
+    public void deleteByOwnerAndTypeAndFilename(UserEntity userEntity, MediaType type, String filename){
+        repo.deleteByOwnerAndTypeAndFilename(userEntity, type, filename);
     }
 
     @Transactional
@@ -39,29 +39,29 @@ public class MediaService {
         return repo.findById(id).orElse(null);
     }
 
-    public MediaEntity findByTypeAndOwner(MediaType type, User owner) {
+    public MediaEntity findByTypeAndOwner(MediaType type, UserEntity owner) {
         return repo.findByTypeAndOwner(type, owner);
     }
 
-    public List<MediaEntity> findAllByOwner(User owner){
+    public List<MediaEntity> findAllByOwner(UserEntity owner){
         return repo.findAllByOwner(owner);
     }
 
-    public MediaEntity getCurrentProfilePictureMedia(User user) {
-        String filename = user.getCurrentProfilePicURL();
+    public MediaEntity getCurrentProfilePictureMedia(UserEntity userEntity) {
+        String filename = userEntity.getCurrentProfilePicURL();
         if (filename == null) return null;
-        return repo.findByOwnerAndTypeAndFilename(user, MediaType.PROFILE_PICTURE, filename)
+        return repo.findByOwnerAndTypeAndFilename(userEntity, MediaType.PROFILE_PICTURE, filename)
                 .orElse(null);
     }
 
-    public MediaEntity getCurrentBannerMedia(User user) {
-        String filename = user.getCurrentBannerPicURL();
+    public MediaEntity getCurrentBannerMedia(UserEntity userEntity) {
+        String filename = userEntity.getCurrentBannerPicURL();
         if (filename == null) return null;
-        return repo.findByOwnerAndTypeAndFilename(user, MediaType.PROFILE_BANNER, filename)
+        return repo.findByOwnerAndTypeAndFilename(userEntity, MediaType.PROFILE_BANNER, filename)
                 .orElse(null);
     }
 
-    public Optional<MediaEntity> findByOwnerAndTypeAndFilename(User user, MediaType type, String filename){
-        return repo.findByOwnerAndTypeAndFilename(user, type, filename);
+    public Optional<MediaEntity> findByOwnerAndTypeAndFilename(UserEntity userEntity, MediaType type, String filename){
+        return repo.findByOwnerAndTypeAndFilename(userEntity, type, filename);
     }
 }

@@ -1,7 +1,12 @@
 package com.sentinel.controller;
 
-import com.sentinel.Validators.ValidateCurrentUser;
-import com.sentinel.model.*;
+import com.sentinel.controller.base.Controller;
+import com.sentinel.dto.request.MessageReq;
+import com.sentinel.security.ValidateCurrentUser;
+import com.sentinel.dto.response.ConvSummaryRes;
+import com.sentinel.dto.response.MessageRes;
+import com.sentinel.enums.FriendshipStatus;
+import com.sentinel.entity.*;
 import com.sentinel.service.*;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
@@ -14,7 +19,7 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/messages")
-public class UserMessagesController extends Controller{
+public class UserMessagesController extends Controller {
 
     private final MessageService messageService;
     private final UserService userService;
@@ -29,16 +34,16 @@ public class UserMessagesController extends Controller{
     }
 
     @PostMapping("/send-text")
-    public ResponseEntity<?> sendTextMessage(@Valid @RequestBody MessageRequestDto request){
-        User currentUser = getCurrentUser();
+    public ResponseEntity<?> sendTextMessage(@Valid @RequestBody MessageReq request){
+        UserEntity currentUserEntity = getCurrentUser();
 
-        Optional<User> targetUser = userService.findByPublicId(request.getReceiverPublicId());
+        Optional<UserEntity> targetUser = userService.findByPublicId(request.getReceiverPublicId());
 
         if(targetUser.isEmpty()){
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
 
-        Optional<Friendship> friendship = friendshipService.findFriendshipBetween(currentUser, targetUser.get());
+        Optional<FriendshipEntity> friendship = friendshipService.findFriendshipBetween(currentUserEntity, targetUser.get());
 
         if(friendship.isEmpty() || !friendship.get().getStatus().equals(FriendshipStatus.ACCEPTED)){
             return ResponseEntity.status(HttpStatus.FORBIDDEN)
@@ -47,62 +52,62 @@ public class UserMessagesController extends Controller{
 
         MessageEntity message = new MessageEntity();
         message.setContent(request.getContent());
-        message.setSender(currentUser);
+        message.setSender(currentUserEntity);
         message.setReceiver(targetUser.get());
 
         MessageEntity saved = messageService.sendMessage(message);
 
-        return ResponseEntity.status(HttpStatus.CREATED).body(MessageDto.fromEntity(saved));
+        return ResponseEntity.status(HttpStatus.CREATED).body(MessageRes.fromEntity(saved));
     }
 
     @GetMapping("/conversation/{targetPublicId}")
     public ResponseEntity<?> getConversation(@PathVariable String targetPublicId){
-        User currentUser = getCurrentUser();
+        UserEntity currentUserEntity = getCurrentUser();
 
-        Optional<User> targetUser = userService.findByPublicId(targetPublicId);
+        Optional<UserEntity> targetUser = userService.findByPublicId(targetPublicId);
 
         if(targetUser.isEmpty()){
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
 
-        Optional<Friendship> friendship = friendshipService.findFriendshipBetween(currentUser, targetUser.get());
+        Optional<FriendshipEntity> friendship = friendshipService.findFriendshipBetween(currentUserEntity, targetUser.get());
 
         if(friendship.isEmpty() || !friendship.get().getStatus().equals(FriendshipStatus.ACCEPTED)){
             return ResponseEntity.status(HttpStatus.FORBIDDEN)
                     .body(Map.of("error", "You can only view messages with friends."));
         }
 
-        List<MessageEntity> allMessages = messageService.findConversationBetween(currentUser.getId(), targetUser.get().getId());
+        List<MessageEntity> allMessages = messageService.findConversationBetween(currentUserEntity.getId(), targetUser.get().getId());
 
-        List<MessageDto> response = allMessages.stream().map(MessageDto::fromEntity).toList();
+        List<MessageRes> response = allMessages.stream().map(MessageRes::fromEntity).toList();
 
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
     @GetMapping("/all-conversations")
     public ResponseEntity<?> getAllConversations(){
-        User currentUser = getCurrentUser();
-        List<ConversationSummaryDto> allConversations = messageService.findAllConversations(currentUser.getId());
+        UserEntity currentUserEntity = getCurrentUser();
+        List<ConvSummaryRes> allConversations = messageService.findAllConversations(currentUserEntity.getId());
         return ResponseEntity.ok(allConversations);
     }
 
     @DeleteMapping("/remove-conversation/{targetPublicId}")
     public ResponseEntity<?> removeConversation(@PathVariable String targetPublicId){
-        User currentUser = getCurrentUser();
+        UserEntity currentUserEntity = getCurrentUser();
 
-        Optional<User> targetUser = userService.findByPublicId(targetPublicId);
+        Optional<UserEntity> targetUser = userService.findByPublicId(targetPublicId);
 
         if(targetUser.isEmpty()){
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
 
-        Optional<Friendship> friendship = friendshipService.findFriendshipBetween(currentUser, targetUser.get());
+        Optional<FriendshipEntity> friendship = friendshipService.findFriendshipBetween(currentUserEntity, targetUser.get());
 
         if(friendship.isEmpty() || !friendship.get().getStatus().equals(FriendshipStatus.ACCEPTED)){
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body(Map.of("Error", "You can delete the conversations only with friends."));
         }
 
-        messageService.removeBySenderAndReceiver(currentUser.getId(), targetUser.get().getId());
+        messageService.removeBySenderAndReceiver(currentUserEntity.getId(), targetUser.get().getId());
 
         return ResponseEntity.status(HttpStatus.OK).build();
     }

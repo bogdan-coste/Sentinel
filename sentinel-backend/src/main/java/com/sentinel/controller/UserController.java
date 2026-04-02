@@ -1,6 +1,11 @@
 package com.sentinel.controller;
 
-import com.sentinel.model.*;
+import com.sentinel.dto.request.UserLoginReq;
+import com.sentinel.dto.request.UserRegistrationReq;
+import com.sentinel.dto.response.MediaRes;
+import com.sentinel.dto.response.UserGuestRes;
+import com.sentinel.enums.FriendshipStatus;
+import com.sentinel.entity.*;
 import com.sentinel.service.*;
 import com.sentinel.utils.TokenGenerator;
 import jakarta.servlet.http.Cookie;
@@ -14,9 +19,8 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 import jakarta.servlet.http.HttpServletResponse;
-import com.sentinel.model.UserRegisterSession;
+import com.sentinel.entity.UserRegistrationEntity;
 
-import javax.print.attribute.standard.Media;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.HashMap;
@@ -57,32 +61,32 @@ public class UserController {
     }
 
     @PostMapping("/register")
-    public ResponseEntity<User> register(@Valid @RequestBody UserRegistrationDto userDto) {
+    public ResponseEntity<UserEntity> register(@Valid @RequestBody UserRegistrationReq userDto) {
 
-        User createdUser = userService.registerUser(userDto);
-        UserRegisterSession session = userRegisterService.createSessionForUser(createdUser);
+        UserEntity createdUserEntity = userService.registerUser(userDto);
+        UserRegistrationEntity session = userRegisterService.createSessionForUser(createdUserEntity);
 
         String verificationLink = "http://localhost:5173/verify?token=" + session.getSessionToken();
 
         Map<String, Object> variables = new HashMap<>();
-        variables.put("name", createdUser.getName());
+        variables.put("name", createdUserEntity.getName());
         variables.put("link", verificationLink);
 
-        MailBody mailBody = new MailBody();
-        mailBody.setTo(createdUser.getEmail());
-        mailBody.setSubject("Verify your email – Sentinel");
-        mailBody.setTemplateName("verification-email");
-        mailBody.setVariables(variables);
+        MailEntity mailEntity = new MailEntity();
+        mailEntity.setTo(createdUserEntity.getEmail());
+        mailEntity.setSubject("Verify your email – Sentinel");
+        mailEntity.setTemplateName("verification-email");
+        mailEntity.setVariables(variables);
 
-        emailService.sendVerificationEmail(mailBody);
+        emailService.sendVerificationEmail(mailEntity);
 
-        return new ResponseEntity<>(createdUser, HttpStatus.CREATED);
+        return new ResponseEntity<>(createdUserEntity, HttpStatus.CREATED);
     }
 
     @GetMapping("/verify")
     public ResponseEntity<?> verifyEmail(@RequestParam String token) {
 
-        UserRegisterSession session = userRegisterService.findBySessionToken(token);
+        UserRegistrationEntity session = userRegisterService.findBySessionToken(token);
         if (session == null) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
                     .body(Map.of("code", "invalid", "message", "Invalid verification link."));
@@ -96,20 +100,20 @@ public class UserController {
                     .body(Map.of("code", "already_verified", "message", "Account already verified."));
         }
 
-        User user = session.getUser();
+        UserEntity userEntity = session.getUserEntity();
 
         try {
-            userFolderService.createUserFolders(user.getFolderName());
+            userFolderService.createUserFolders(userEntity.getFolderName());
         }catch(IOException e) {
-            log.error("Failed to create folder for user: {}, {}", user.getUsername(), user.getFolderName(), e);
+            log.error("Failed to create folder for user: {}, {}", userEntity.getUsername(), userEntity.getFolderName(), e);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body((Map.of("code", "folder_creation_error", "message", "Error creating your account.")));
 
         }
 
         UserMediaMapping mapping = new UserMediaMapping();
 
-        user.setLegitimateUser(true);
-        userService.save(user);
+        userEntity.setLegitimateUser(true);
+        userService.save(userEntity);
 
         session.setAccountVerified(true);
         userRegisterService.save(session);
@@ -118,24 +122,24 @@ public class UserController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<?> login(@Valid @RequestBody UserLoginDto userDto, HttpServletResponse response){
+    public ResponseEntity<?> login(@Valid @RequestBody UserLoginReq userDto, HttpServletResponse response){
 
-        User user = userService.findByEmail(userDto.getEmail());
+        UserEntity userEntity = userService.findByEmail(userDto.getEmail());
 
-        if(user == null || !passwordEncoder.matches(userDto.getPassword(), user.getPassword())){
+        if(userEntity == null || !passwordEncoder.matches(userDto.getPassword(), userEntity.getPassword())){
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of("error", "Invalid email or password."));
         }
 
-        if (!user.isLegitimateUser()) {
+        if (!userEntity.isLegitimateUser()) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN)
                     .body(Map.of("error", "Please verify your email before logging in."));
         }
 
         String token = tokenGenerator.generateToken();
 
-        UserLoginSession session = new UserLoginSession();
+        UserLoginEntity session = new UserLoginEntity();
         session.setSessionToken(token);
-        session.setUser(user);
+        session.setUserEntity(userEntity);
         session.setEmail(userDto.getEmail());
         session.setExpirationDate(LocalDateTime.now().plusMonths(2));
 
@@ -159,43 +163,43 @@ public class UserController {
         }
 
         Object principal = auth.getPrincipal();
-        if (!(principal instanceof User user)) {
+        if (!(principal instanceof UserEntity userEntity)) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid principal");
         }
 
-        Long userId = user.getId();
+        Long userId = userEntity.getId();
         if (userId == null) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("User ID missing");
         }
 
-        Optional<User> userOpt = userService.findById(userId);
+        Optional<UserEntity> userOpt = userService.findById(userId);
         if (userOpt.isEmpty()) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("User not found");
         }
 
-        User freshUser = userOpt.get();
+        UserEntity freshUserEntity = userOpt.get();
 
         String profilePicUrl = null;
-        if (freshUser.getCurrentProfilePicURL() != null && !freshUser.getCurrentProfilePicURL().isEmpty()) {
-            profilePicUrl = "/uploads/public/" + freshUser.getPublicId() + "/profile/" + freshUser.getCurrentProfilePicURL();
+        if (freshUserEntity.getCurrentProfilePicURL() != null && !freshUserEntity.getCurrentProfilePicURL().isEmpty()) {
+            profilePicUrl = "/uploads/public/" + freshUserEntity.getPublicId() + "/profile/" + freshUserEntity.getCurrentProfilePicURL();
         }
 
         String bannerPicUrl = null;
-        if (freshUser.getCurrentBannerPicURL() != null && !freshUser.getCurrentBannerPicURL().isEmpty()) {
-            bannerPicUrl = "/uploads/public/" + freshUser.getPublicId() + "/banner/" + freshUser.getCurrentBannerPicURL();
+        if (freshUserEntity.getCurrentBannerPicURL() != null && !freshUserEntity.getCurrentBannerPicURL().isEmpty()) {
+            bannerPicUrl = "/uploads/public/" + freshUserEntity.getPublicId() + "/banner/" + freshUserEntity.getCurrentBannerPicURL();
         }
 
-        MediaEntity profilePic = mediaService.getCurrentProfilePictureMedia(freshUser);
-        MediaEntity profileBanner = mediaService.getCurrentBannerMedia(freshUser);
+        MediaEntity profilePic = mediaService.getCurrentProfilePictureMedia(freshUserEntity);
+        MediaEntity profileBanner = mediaService.getCurrentBannerMedia(freshUserEntity);
 
         Map<String, Object> response = new HashMap<>();
-        response.put("id", freshUser.getId());
-        response.put("name", freshUser.getName());
-        response.put("username", freshUser.getUsername());
-        response.put("email", freshUser.getEmail());
-        response.put("description", freshUser.getDescription());
-        response.put("friendCount", freshUser.getFriendCount());
-        response.put("publicId", freshUser.getPublicId());
+        response.put("id", freshUserEntity.getId());
+        response.put("name", freshUserEntity.getName());
+        response.put("username", freshUserEntity.getUsername());
+        response.put("email", freshUserEntity.getEmail());
+        response.put("description", freshUserEntity.getDescription());
+        response.put("friendCount", freshUserEntity.getFriendCount());
+        response.put("publicId", freshUserEntity.getPublicId());
         response.put("profilePicUrl", profilePicUrl);
         response.put("profilePicMediaId", profilePic != null ? profilePic.getId() : null);
         response.put("bannerPicUrl", bannerPicUrl);
@@ -212,15 +216,15 @@ public class UserController {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Not authenticated");
         }
 
-        User user = (User) auth.getPrincipal();
+        UserEntity userEntity = (UserEntity) auth.getPrincipal();
 
-        if(user == null){
+        if(userEntity == null){
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
 
-        List<User> users = userService.searchUsers(query);
+        List<UserEntity> userEntities = userService.searchUsers(query);
 
-        List<Map<String, Object>> response = users.stream().map(userElem ->{
+        List<Map<String, Object>> response = userEntities.stream().map(userElem ->{
             Map<String, Object> map = new HashMap<>();
             map.put("publicId", userElem.getPublicId());
             if (userElem.getCurrentProfilePicURL() != null) {
@@ -238,11 +242,11 @@ public class UserController {
 
     @GetMapping("/{publicId}")
     public ResponseEntity<?> getUserProfile(@PathVariable String publicId) {
-        Optional<User> targetOpt = userService.findByPublicId(publicId);
+        Optional<UserEntity> targetOpt = userService.findByPublicId(publicId);
         if (targetOpt.isEmpty()) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found");
         }
-        User targetUser = targetOpt.get();
+        UserEntity targetUserEntity = targetOpt.get();
 
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 
@@ -250,19 +254,19 @@ public class UserController {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
 
-        User currentUser = (User) auth.getPrincipal();
+        UserEntity currentUserEntity = (UserEntity) auth.getPrincipal();
 
-        if(currentUser == null){
+        if(currentUserEntity == null){
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
 
-        if (currentUser.getPublicId().equals(publicId)) {
+        if (currentUserEntity.getPublicId().equals(publicId)) {
             return ResponseEntity.status(HttpStatus.FOUND)
                     .header("Location", "/profile")
                     .build();
         }
 
-        Optional<Friendship> friendship = friendshipService.findFriendshipBetween(currentUser, targetUser);
+        Optional<FriendshipEntity> friendship = friendshipService.findFriendshipBetween(currentUserEntity, targetUserEntity);
 
         String friendshipStatus = "NONE";
         boolean isFriend = false;
@@ -276,17 +280,17 @@ public class UserController {
 
         response.put("friendshipStatus", friendshipStatus);
 
-        UserGuestDto userInfoDto = UserGuestDto.fromEntity(targetUser, isFriend);
+        UserGuestRes userInfoDto = UserGuestRes.fromEntity(targetUserEntity, isFriend);
         response.put("userInformation", userInfoDto);
 
         if(isFriend) {
-            List<User> targetUserFriends = friendshipService.findFriends(targetUser);
-            List<UserGuestDto> friendDtos = targetUserFriends.stream()
-                    .map(friend -> UserGuestDto.fromEntity(friend, true))
+            List<UserEntity> targetUserEntityFriends = friendshipService.findFriends(targetUserEntity);
+            List<UserGuestRes> friendDtos = targetUserEntityFriends.stream()
+                    .map(friend -> UserGuestRes.fromEntity(friend, true))
                     .toList();
-            List<MediaEntity> targetUserMedia = mediaService.findAllByOwner(targetUser);
-            List<MediaResponseDto> mediaDtos = targetUserMedia.stream().
-                    map(MediaResponseDto::fromEntity).toList();
+            List<MediaEntity> targetUserMedia = mediaService.findAllByOwner(targetUserEntity);
+            List<MediaRes> mediaDtos = targetUserMedia.stream().
+                    map(MediaRes::fromEntity).toList();
 
             response.put("friends", friendDtos);
             response.put("media", mediaDtos);

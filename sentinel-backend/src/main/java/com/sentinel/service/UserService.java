@@ -1,8 +1,7 @@
 package com.sentinel.service;
 
-import com.sentinel.model.Friendship;
-import com.sentinel.model.User;
-import com.sentinel.model.UserRegistrationDto;
+import com.sentinel.entity.UserEntity;
+import com.sentinel.dto.request.UserRegistrationReq;
 import com.sentinel.repository.UserRepository;
 import com.sentinel.utils.FolderNameGenerator;
 import com.sentinel.utils.PublicIdGenerator;
@@ -48,7 +47,7 @@ public class UserService {
     }
 
     @Transactional
-    public User registerUser(UserRegistrationDto dto) {
+    public UserEntity registerUser(UserRegistrationReq dto) {
         if (userRepository.existsByEmail(dto.getEmail())) {
             throw new RuntimeException("Email already in use");
         }
@@ -56,37 +55,37 @@ public class UserService {
             throw new RuntimeException("Username already taken");
         }
 
-        User user = new User();
-        user.setFolderName(generateUniqueFolderName());
-        user.setPublicId(generateUniquePublicId());
-        user.setEmail(dto.getEmail());
-        user.setUsername(dto.getUsername());
-        user.setPassword(passwordEncoder.encode(dto.getPassword()));
-        user.setName(dto.getName());
-        user.setBirthDate(dto.getBirthDate());
-        user.setGender(dto.getGender());
-        user.setSafeGuardedMode(false);
+        UserEntity userEntity = new UserEntity();
+        userEntity.setFolderName(generateUniqueFolderName());
+        userEntity.setPublicId(generateUniquePublicId());
+        userEntity.setEmail(dto.getEmail());
+        userEntity.setUsername(dto.getUsername());
+        userEntity.setPassword(passwordEncoder.encode(dto.getPassword()));
+        userEntity.setName(dto.getName());
+        userEntity.setBirthDate(dto.getBirthDate());
+        userEntity.setGender(dto.getGender());
+        userEntity.setSafeGuardedMode(false);
 
-        return userRepository.save(user);
+        return userRepository.save(userEntity);
     }
 
-    public void save(User user) {
-        userRepository.save(user);
+    public void save(UserEntity userEntity) {
+        userRepository.save(userEntity);
     }
 
-    public User findByEmail(String email) {
+    public UserEntity findByEmail(String email) {
         return userRepository.findByEmail(email).orElse(null);
     }
 
-    public Optional<User> findById(Long id) {
+    public Optional<UserEntity> findById(Long id) {
         return userRepository.findById(id);
     }
 
-    public Optional<User> findByPublicId(String publicId) {
+    public Optional<UserEntity> findByPublicId(String publicId) {
         return userRepository.findByPublicId(publicId);
     }
 
-    public List<User> searchUsers(String query) {
+    public List<UserEntity> searchUsers(String query) {
         return userRepository.searchUsers(query);
     }
 

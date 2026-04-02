@@ -1,8 +1,6 @@
 package com.sentinel.repository;
 
-import com.sentinel.model.User;
-import com.sentinel.model.UserRegisterSession;
-import com.sentinel.utils.TokenGenerator;
+import com.sentinel.entity.UserRegistrationEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -13,13 +11,13 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
-public interface UserRegisterSessionRepository extends JpaRepository<UserRegisterSession, Long> {
+public interface UserRegisterSessionRepository extends JpaRepository<UserRegistrationEntity, Long> {
 
     boolean existsById(Long id);
 
-    @Query("SELECT s FROM UserRegisterSession s WHERE s.accountVerified = false AND s.expirationDate < :time")
-    List<UserRegisterSession> findExpiredUnverifiedSessions(@Param("time") LocalDateTime time);
+    @Query("SELECT s FROM UserRegistrationEntity s WHERE s.accountVerified = false AND s.expirationDate < :time")
+    List<UserRegistrationEntity> findExpiredUnverifiedSessions(@Param("time") LocalDateTime time);
 
-    Optional<UserRegisterSession> findBySessionToken(String token);
+    Optional<UserRegistrationEntity> findBySessionToken(String token);
 
 }

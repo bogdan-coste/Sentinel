@@ -1,6 +1,6 @@
 package com.sentinel.controller;
 
-import com.sentinel.model.User;
+import com.sentinel.entity.UserEntity;
 import com.sentinel.service.UserService;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.FileSystemResource;
@@ -15,8 +15,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Optional;
-
-import com.sentinel.model.MediaEntity;
 
 @RestController
 public class MediaController {
@@ -34,14 +32,14 @@ public class MediaController {
     public ResponseEntity<Resource> serveFile(@PathVariable String publicId,
                                               @PathVariable String type,
                                               @PathVariable String filename) {
-        Optional<User> userOpt = userService.findByPublicId(publicId);
+        Optional<UserEntity> userOpt = userService.findByPublicId(publicId);
         if (userOpt.isEmpty()) {
             return ResponseEntity.notFound().build();
         }
 
-        User user = userOpt.get();
+        UserEntity userEntity = userOpt.get();
 
-        Path file = Paths.get(baseUploadDir, "users", user.getFolderName(), type, filename);
+        Path file = Paths.get(baseUploadDir, "users", userEntity.getFolderName(), type, filename);
         if (!Files.exists(file)) {
             return ResponseEntity.notFound().build();
         }

@@ -1,8 +1,8 @@
 package com.sentinel.service;
 
-import com.sentinel.model.LikeEntity;
-import com.sentinel.model.MediaEntity;
-import com.sentinel.model.User;
+import com.sentinel.entity.LikeEntity;
+import com.sentinel.entity.MediaEntity;
+import com.sentinel.entity.UserEntity;
 import com.sentinel.repository.LikeRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -18,8 +18,8 @@ public class LikeService {
         this.repo = repo;
     }
 
-    public boolean existsByUserAndMedia(User user, MediaEntity media){
-        return repo.existsByUserAndMedia(user, media);
+    public boolean existsByUserAndMedia(UserEntity userEntity, MediaEntity media){
+        return repo.existsByUserAndMedia(userEntity, media);
     }
 
     @Transactional(rollbackFor = Exception.class)
@@ -32,7 +32,7 @@ public class LikeService {
     }
 
     @Transactional(rollbackFor = Exception.class)
-    public void deleteByUserAndMedia(User user, MediaEntity media){
-        repo.deleteByUserAndMedia(user, media);
+    public void deleteByUserAndMedia(UserEntity userEntity, MediaEntity media){
+        repo.deleteByUserAndMedia(userEntity, media);
     }
 }

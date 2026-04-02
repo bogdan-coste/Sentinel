@@ -1,6 +1,9 @@
 package com.sentinel.service;
 
-import com.sentinel.model.*;
+import com.sentinel.dto.response.ConvSummaryRes;
+import com.sentinel.dto.response.MessageRes;
+import com.sentinel.dto.response.UserRes;
+import com.sentinel.entity.*;
 import com.sentinel.repository.MessageRepository;
 import org.jspecify.annotations.NonNull;
 import org.springframework.data.domain.Page;
@@ -10,7 +13,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Transactional(readOnly = true)
@@ -36,36 +38,24 @@ public class MessageService {
         return repo.existsBySenderAndReceiver(user1Id, user2Id);
     }
 
-    @Transactional(readOnly = true)
-    public List<ConversationSummaryDto> findAllConversations(Long userId) {
-        List<User> partners = repo.findConversationPartners(userId);
-        Pageable topOne = PageRequest.of(0, 1);
-
-        return partners.stream()
-                .map(partner -> {
-                    return getConversationSummaryDto(userId, partner, topOne);
-                })
-                .collect(Collectors.toList());
-    }
-
-    private ConversationSummaryDto buildConversationSummary(Long userId, User partner) {
+    private ConvSummaryRes buildConversationSummary(Long userId, UserEntity partner) {
         Pageable topOne = PageRequest.of(0, 1);
         return getConversationSummaryDto(userId, partner, topOne);
     }
 
     @NonNull
-    private ConversationSummaryDto getConversationSummaryDto(Long userId, User partner, Pageable topOne) {
+    private ConvSummaryRes getConversationSummaryDto(Long userId, UserEntity partner, Pageable topOne) {
         Page<MessageEntity> lastMessagePage = repo.findLastMessageBetween(userId, partner.getId(), topOne);
-        MessageDto lastMessageDto = lastMessagePage.getContent().stream()
+        MessageRes lastMessageRes = lastMessagePage.getContent().stream()
                 .findFirst()
-                .map(MessageDto::fromEntity)
+                .map(MessageRes::fromEntity)
                 .orElse(null);
 
         long unreadCount = repo.findAllUnreadMessages(partner.getId(), userId);
 
-        return new ConversationSummaryDto(
-                UserDto.fromEntity(partner),
-                lastMessageDto,
+        return new ConvSummaryRes(
+                UserRes.fromEntity(partner),
+                lastMessageRes,
                 unreadCount
         );
     }
@@ -73,5 +63,23 @@ public class MessageService {
     @Transactional
     public void removeBySenderAndReceiver(Long user1Id, Long user2Id){
         repo.removeBySenderAndReceiver(user1Id, user2Id);
+    }
+
+    public List<ConvSummaryRes> findAllConversations(Long currentUserId) {
+        List<MessageEntity> threads = repo.findLastMessagesForAllThreads(currentUserId);
+
+        return threads.stream().map(message -> {
+            UserEntity partner = message.getSender().getId().equals(currentUserId)
+                    ? message.getReceiver()
+                    : message.getSender();
+
+            ConvSummaryRes res = new ConvSummaryRes();
+            res.setUserEntity(UserRes.fromEntity(partner));
+            res.setLastMessage(MessageRes.fromEntity(message));
+
+            res.setUnreadCount((int) repo.findAllUnreadMessages(partner.getId(), currentUserId));
+
+            return res;
+        }).toList();
     }
 }

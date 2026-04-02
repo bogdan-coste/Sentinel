@@ -1,7 +1,7 @@
 package com.sentinel.repository;
 
-import com.sentinel.model.CommentEntity;
-import com.sentinel.model.MediaEntity;
+import com.sentinel.entity.CommentEntity;
+import com.sentinel.entity.MediaEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;

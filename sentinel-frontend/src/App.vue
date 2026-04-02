@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { sentinelContent } from './store/data/main_page/content.ts'
+import { sentinelContent } from './store/data/main_page/content'
 </script>
 
 <template>
