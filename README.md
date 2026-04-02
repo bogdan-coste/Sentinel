@@ -1,93 +1,78 @@
 <p align="center">
-  <img src="resources/readme/banner.png" alt="Sentinel Banner" width="100%">
+<img src="resources/readme/banner.png" alt="Sentinel Banner" width="100%">
 </p>
 
 <p align="center">
-  <img src="https://img.shields.io/badge/Java-ED8B00?style=for-the-badge&logo=java&logoColor=white" />
-  <img src="https://img.shields.io/badge/Spring_Boot-6DB33F?style=for-the-badge&logo=spring-boot&logoColor=white" />
-  <img src="https://img.shields.io/badge/Vue.js-35495E?style=for-the-badge&logo=vuedotjs&logoColor=4FC08D" />
-  <img src="https://img.shields.io/badge/PostgreSQL-316192?style=for-the-badge&logo=postgresql&logoColor=white" />
-  <img src="https://img.shields.io/badge/Maintained%3F-yes-green.svg?style=for-the-badge" />
+<img src="https://img.shields.io/badge/Java-ED8B00?style=for-the-badge&logo=openjdk&logoColor=white" />
+<img src="https://img.shields.io/badge/Spring_Boot-6DB33F?style=for-the-badge&logo=spring-boot&logoColor=white" />
+<img src="https://img.shields.io/badge/Vue.js-35495E?style=for-the-badge&logo=vuedotjs&logoColor=4FC08D" />
+<img src="https://img.shields.io/badge/TypeScript-007ACC?style=for-the-badge&logo=typescript&logoColor=white" />
+<img src="https://img.shields.io/badge/PostgreSQL-316192?style=for-the-badge&logo=postgresql&logoColor=white" />
+<img src="https://img.shields.io/badge/Docker-2496ED?style=for-the-badge&logo=docker&logoColor=white" />
+<img src="https://img.shields.io/badge/JWT-000000?style=for-the-badge&logo=JSON%20web%20tokens&logoColor=white" />
 </p>
+🛡️ Sentinel: Social Media, But Human Again.
 
----
+Sentinel is an open-source alternative to mainstream social media. It is designed for digital well-being, prioritizing authentic human connection and data sovereignty over addictive loops and intrusive surveillance.
 
-# 🛡️ Sentinel — Privacy-First Social Platform
+    The Mission: To prove that social platforms can be engaging without compromising your fundamental right to privacy.
 
-**Sentinel** is an open-source, ethical alternative to mainstream social media. Architected for **digital well-being**, it prioritizes authentic human connection and data sovereignty over predatory engagement loops and intrusive surveillance.
+🌟 Why Sentinel? (The User Experience)
 
-> **The Mission:** To prove that social platforms can be engaging and sustainable without compromising fundamental human rights to privacy.
+Mainstream networks turn you into a product. Sentinel puts you back in the driver's seat:
 
----
+    🧘 Ethical Feed: Our algorithm surfaces quality content that respects your time. Once you're caught up, Sentinel encourages you to step away and enjoy the real world.
 
-## 📍 Table of Contents
-- [💡 Motivation](#-motivation)
-- [✨ Core Features](#-core-features)
-- [💰 Monetization Model](#-ethical-monetization-model)
-- [⚙️ Tech Stack](#️-built-with-tech-stack)
-- [📈 Performance Metrics](#-performance--security-metrics)
-- [🚀 Getting Started](#-getting-started)
-- [🌍 Open Source](#-open-source)
+    🕵️ Radical Privacy: We don't track you across the web. Connections are built on your explicit interests, not "shadow profiling" or hidden data harvesting.
 
----
+    🧒 Native Safety: A dedicated environment for minors with built-in protection and engagement constraints as a default, not an afterthought.
 
-## 💡 Motivation
-In today's digital landscape, mainstream networks harvest userEntity data and employ addictive algorithms to maximize screen time. Sentinel was created as an **ethical counter-movement**. By strictly adhering to **EU GDPR standards**, eliminating third-party trackers, and introducing proactive safety for minors, Sentinel fosters a healthier digital environment.
+    🚫 Clean Monetization: We use contextual ads based on what you’re viewing right now—never on your private browsing history or personal identity.
 
----
+🚀 Quick Start
 
-## ✨ The "Ethical Feed" & Core Features
+Launch the entire Sentinel ecosystem (Frontend, Backend, and Database) in minutes using Docker.
+Prerequisites
 
-### 🧘 Digital Well-being
-* **Bounded Entertainment:** Personalized content feeds that respect your time. High-quality posts are surfaced alongside **enforced session limits** to prevent "doomscrolling."
-* **On-Device AI Assistant:** A smart module that studies interaction habits locally. It provides context-aware suggestions (e.g., screen-break reminders) tailored to your routine.
-* **100% Local Data:** Behavioral analysis is processed and stored **strictly on your device**. Your usage patterns never touch our backend.
+    Docker and Docker Compose installed.
 
-### 🛡️ Privacy & Security
-* **Isolated Recommendation Engine:** Connections are generated **ONLY** based on explicit activity. We do not expose hidden follower graphs or use "shadow profiling."
-* **Age-Aware Privacy:** Location tracking is blocked by default for adults. For minors, it acts as a non-monetized safety measure.
-* **Native 'Safeguarded Mode':** A dedicated environment for minors with dynamic engagement constraints and preemptive moderation.
+Installation
 
----
+    Clone the repository:
+    Bash
 
-## 💰 Ethical Monetization Model
-Sentinel proves that integrity is a viable business model:
-* **Contextual Ads:** Revenue is generated via non-intrusive ads based on content categories, not surveillance.
-* **Zero Brokerage:** We pledge to **NEVER** sell or trade userEntity data.
-* **Sustainability:** Decoupling profit from harvesting proves privacy is a fundamental right, not a luxury.
+    git clone https://github.com/bogdan-coste/Sentinel.git
+    cd Sentinel
 
----
+    Launch everything:
+    Bash
 
-## ⚙️ Built With (Tech Stack)
+    docker compose up -d
 
-| Layer | Technology |
-| :--- | :--- |
-| **Backend** | Java 17+, Spring Boot, Spring Security |
-| **Frontend** | Vue.js 3 (Composition API) |
-| **Database** | PostgreSQL, Hibernate / Spring Data JPA |
-| **Auth** | OAuth2 / JWT (Stateless Authentication) |
-| **AI/ML** | Python, ONNX Runtime (On-device Inference) |
+    Access the App:
+    Open your browser and go to http://localhost:5173. You’re ready to go!
 
----
+🛠️ Technical Achievements
 
-## 📈 Performance & Security Metrics
+Sentinel isn't just ethical; it's engineered for scale and maintainability using modern industry standards.
+🏛️ Frontend: Feature-Driven Design (FDD)
 
-| Metric | Target / Result |
-| :--- | :--- |
-| **API Efficiency** | < 100ms average response (20+ endpoints) |
-| **Preemptive Moderation** | < 200ms latency with zero data retention |
-| **Compliance** | 100% EU GDPR Compliant (Zero 3rd-party trackers) |
+The Vue.js 3 application was recently refactored from a monolithic mess into a modular, Feature-Driven architecture.
 
----
+    Domain Isolation: Features like Auth, Post, Chat, and User are self-contained with their own components, logic, and types.
 
-## 🚀 Getting Started
+    Scalable Types: Decentralized TypeScript interfaces prevent "god-file" syndrome and ensure type safety across the board.
 
-### Prerequisites
-- JDK 17+
-- Node.js & npm
-- PostgreSQL Instance
+    Clean Imports: Advanced path aliasing (@features, @shared) and Barrel files (index.ts) reduce code clutter and import complexity.
 
-### Installation
-1. **Clone the repository**
-   ```bash
-   git clone [https://github.com/bogdan-coste/Sentinel.git](https://github.com/bogdan-coste/Sentinel.git)
+⚙️ Backend: Robust Java Ecosystem
+
+    Stateless Security: Built with Spring Boot and Spring Security, utilizing JWT for secure, scalable authentication.
+
+    Database Integrity: Powered by PostgreSQL with optimized JPA queries, maintaining a sub-100ms average API response time.
+
+    Edge-AI Ready: The architecture is designed to support on-device inference, allowing behavioral analysis to stay 100% local to the user's hardware.
+
+🌍 Open Source & Contributing
+
+Sentinel is built on the belief that transparency is the only guarantee of privacy. We are a community-driven project. Whether you want to fix a bug, suggest a feature, or improve the documentation, we welcome your contributions! Feel free to open an issue or submit a Pull Request.
