@@ -4,9 +4,9 @@
 
       <AppNavbar />
 
-      <div class="flex-1 w-full max-w-[1200px] mx-auto overflow-hidden flex flex-row gap-8 px-4 lg:px-8 py-6">
+      <div class="flex-1 w-full max-w-300 mx-auto overflow-hidden flex flex-row gap-8 px-4 lg:px-8 py-6">
 
-        <aside class="w-[280px] xl:w-[300px] h-full flex flex-col shrink-0 bg-white/[0.02] backdrop-blur-2xl rounded-[32px] shadow-2xl border border-white/[0.05] overflow-hidden hidden md:flex">
+        <aside class="w-70 xl:w-[300px] h-full flex flex-col shrink-0 bg-white/[0.02] backdrop-blur-2xl rounded-[32px] shadow-2xl border border-white/[0.05] overflow-hidden hidden md:flex">
 
           <div class="p-6 pb-4 border-b border-white/[0.05] shrink-0">
             <h2 class="text-2xl font-black text-white tracking-tight">Settings</h2>
@@ -206,8 +206,8 @@
 
 <script setup lang="ts">
 import { ref, computed, reactive } from 'vue'
-import AppNavbar from "../../layouts/AppNavbar.vue"
-import AppCanvas from "../../layouts/AppCanvas.vue"
+import AppNavbar from "@layouts/components/AppNavbar.vue"
+import AppCanvas from "@layouts/components/AppCanvas.vue"
 
 // Tab configuration
 const tabs = [

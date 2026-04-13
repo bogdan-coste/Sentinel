@@ -13,7 +13,7 @@
         <input
             v-model="textInput"
             type="text"
-            placeholder="Search userEntities..."
+            placeholder="Explore"
             class="w-full bg-white/4 hover:bg-white/6 focus:bg-white/8 border border-white/5 rounded-full py-2.5 pl-10 pr-4 text-sm text-white placeholder-white/50 focus:outline-none focus:border-white/20 transition-all relative z-10"
         />
 
@@ -61,27 +61,53 @@
     </div>
 
     <div class="flex items-center justify-end gap-5">
+
       <router-link to="/home" class="relative flex flex-col items-center group">
-        <button class="text-white group-hover:scale-110 transition-all p-2 bg-white/10 rounded-full shadow-lg border border-white/5 flex items-center justify-center">
+        <button :class="[
+          'transition-all p-2 rounded-full flex items-center justify-center group-hover:scale-110',
+          route.path.startsWith('/home')
+            ? 'text-white bg-white/10 shadow-lg border border-white/5'
+            : 'text-white/60 bg-white/5 border border-transparent hover:bg-white/10 hover:text-white'
+        ]">
           <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z"></path></svg>
         </button>
-        <span class="absolute -bottom-2 w-1 h-1 bg-white rounded-full shadow-[0_0_8px_rgba(255,255,255,0.8)]"></span>
+        <span v-if="route.path.startsWith('/home')" class="absolute -bottom-2 w-1 h-1 bg-white rounded-full shadow-[0_0_8px_rgba(255,255,255,0.8)]"></span>
       </router-link>
 
-      <router-link to="/messages" class="text-white/60 hover:text-white hover:scale-110 transition-all p-2 bg-white/5 rounded-full hover:bg-white/10 border border-transparent flex items-center justify-center">
-        <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M18 10c0 3.866-3.582 7-8 7a8.841 8.841 0 01-4.083-.98L2 17l1.338-3.123C2.493 12.767 2 11.434 2 10c0-3.866 3.582-7 8-7s8 3.134 8 7zM7 9H5v2h2V9zm8 0h-2v2h2V9zM9 9h2v2H9V9z" clip-rule="evenodd"></path></svg>
+      <router-link to="/messages" class="relative flex flex-col items-center group">
+        <button :class="[
+          'transition-all p-2 rounded-full flex items-center justify-center group-hover:scale-110',
+          route.path.startsWith('/messages')
+            ? 'text-white bg-white/10 shadow-lg border border-white/5'
+            : 'text-white/60 bg-white/5 border border-transparent hover:bg-white/10 hover:text-white'
+        ]">
+          <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M18 10c0 3.866-3.582 7-8 7a8.841 8.841 0 01-4.083-.98L2 17l1.338-3.123C2.493 12.767 2 11.434 2 10c0-3.866 3.582-7 8-7s8 3.134 8 7zM7 9H5v2h2V9zm8 0h-2v2h2V9zM9 9h2v2H9V9z" clip-rule="evenodd"></path></svg>
+        </button>
+        <span v-if="route.path.startsWith('/messages')" class="absolute -bottom-2 w-1 h-1 bg-white rounded-full shadow-[0_0_8px_rgba(255,255,255,0.8)]"></span>
       </router-link>
 
-      <router-link to="/settings" class="text-white/60 hover:text-white hover:scale-110 transition-all p-2 bg-white/5 rounded-full hover:bg-white/10 border border-transparent flex items-center justify-center">
-        <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M11.49 3.17c-.38-1.56-2.6-1.56-2.98 0a1.532 1.532 0 01-2.286.948c-1.372-.836-2.942.734-2.106 2.106.54.886.061 2.042-.947 2.287-1.561.379-1.561 2.6 0 2.978a1.532 1.532 0 01.947 2.287c-.836 1.372.734 2.942 2.106 2.106a1.532 1.532 0 012.287.947c.379 1.561 2.6 1.561 2.978 0a1.533 1.533 0 012.287-.947c1.372.836 2.942-.734 2.106-2.106a1.533 1.533 0 01.947-2.287c1.561-.379 1.561-2.6 0-2.978a1.532 1.532 0 01-.947-2.287c.836-1.372-.734-2.942-2.106-2.106a1.532 1.532 0 01-2.287-.947zM10 13a3 3 0 100-6 3 3 0 000 6z" clip-rule="evenodd"></path></svg>
+      <router-link to="/settings" class="relative flex flex-col items-center group">
+        <button :class="[
+          'transition-all p-2 rounded-full flex items-center justify-center group-hover:scale-110',
+          route.path.startsWith('/settings')
+            ? 'text-white bg-white/10 shadow-lg border border-white/5'
+            : 'text-white/60 bg-white/5 border border-transparent hover:bg-white/10 hover:text-white'
+        ]">
+          <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M11.49 3.17c-.38-1.56-2.6-1.56-2.98 0a1.532 1.532 0 01-2.286.948c-1.372-.836-2.942.734-2.106 2.106.54.886.061 2.042-.947 2.287-1.561.379-1.561 2.6 0 2.978a1.532 1.532 0 01.947 2.287c-.836 1.372.734 2.942 2.106 2.106a1.532 1.532 0 012.287.947c.379 1.561 2.6 1.561 2.978 0a1.533 1.533 0 012.287-.947c1.372.836 2.942-.734 2.106-2.106a1.533 1.533 0 01.947-2.287c1.561-.379 1.561-2.6 0-2.978a1.532 1.532 0 01-.947-2.287c.836-1.372-.734-2.942-2.106-2.106a1.532 1.532 0 01-2.287-.947zM10 13a3 3 0 100-6 3 3 0 000 6z" clip-rule="evenodd"></path></svg>
+        </button>
+        <span v-if="route.path.startsWith('/settings')" class="absolute -bottom-2 w-1 h-1 bg-white rounded-full shadow-[0_0_8px_rgba(255,255,255,0.8)]"></span>
       </router-link>
+
     </div>
   </header>
 </template>
 
 <script setup lang="ts">
 import { ref, watch } from 'vue';
+import { useRoute } from 'vue-router';
 import api from '@shared/api/api';
+
+const route = useRoute();
 
 const textInput = ref('');
 const searchResults = ref<any[]>([]);
@@ -110,7 +136,6 @@ watch(textInput, (query) => {
     try {
       const response = await api.get(`/users/searchAccounts?query=${query}`)
       searchResults.value = response.data;
-      console.log(searchResults)
     } catch (err) {
       console.error('Search failed', err);
       searchResults.value = [];
